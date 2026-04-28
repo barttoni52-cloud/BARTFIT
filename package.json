@@ -1,0 +1,26 @@
+{
+  "name": "bartfit",
+  "version": "3.0.0",
+  "description": "Application fitness premium — séances science-based, nutrition personnalisée, suivi sommeil, inspiration champions",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.1"
+  },
+  "keywords": ["fitness", "sport", "react", "pwa", "health", "workout"],
+  "author": "BartFit",
+  "license": "MIT"
+}
