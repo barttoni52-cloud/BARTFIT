@@ -818,7 +818,12 @@ function Onboarding({ onDone }) {
     onDone(profile);
   };
   const canNext = () => {
-    if(step===1) return p.name.trim().length>0 && parseInt(p.age)>=5 && parseInt(p.age)<=100;
+    if(step===1) {
+      if(p.name.trim().length===0) return false;
+      if(p.age===""||p.age===undefined) return true; // âge optionnel
+      const a=parseInt(p.age);
+      return !isNaN(a) && a>=5 && a<=100;
+    }
     if(step===2) return parseFloat(p.weight)>0 && parseFloat(p.height)>0;
     return true;
   };
@@ -852,9 +857,21 @@ function Onboarding({ onDone }) {
       </div>
       <div style={{marginBottom:16}}>
         <div style={{fontSize:12,color:C.muted,marginBottom:6,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>Âge</div>
-        <input style={inputStyle} type="number" placeholder="25" min="5" max="100" value={p.age}
-          onChange={e=>{const v=parseInt(e.target.value);if(e.target.value===""||(!isNaN(v)&&v>=5&&v<=100))up("age",e.target.value==""?"":String(Math.max(5,Math.min(100,v))))}}/>
-        {p.age&&(parseInt(p.age)<5||parseInt(p.age)>100)&&<div style={{fontSize:11,color:C.red,marginTop:4}}>⚠️ Âge invalide (5–100 ans)</div>}
+        <input
+          style={inputStyle}
+          type="number"
+          placeholder="25"
+          min="5" max="100"
+          value={p.age}
+          onChange={e=>up("age",e.target.value)}
+          onBlur={e=>{
+            const v=parseInt(e.target.value);
+            if(e.target.value!==""&&(!isNaN(v))){ up("age",String(Math.min(100,Math.max(5,v)))); }
+          }}
+        />
+        {p.age!==""&&p.age!==undefined&&(parseInt(p.age)<5||parseInt(p.age)>100)&&(
+          <div style={{fontSize:11,color:C.red,marginTop:4}}>⚠️ Âge invalide (entre 5 et 100 ans)</div>
+        )}
       </div>
       <div>
         <div style={{fontSize:12,color:C.muted,marginBottom:8,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>Genre</div>
