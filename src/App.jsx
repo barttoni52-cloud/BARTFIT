@@ -590,11 +590,11 @@ function StickFigure({type="generic",color=C.accent,size=64}){
   const file = map[type]||"pushup";
   return (
     <img
-      src={`/icons/${file}.png`}
-      alt={type}
+      src={`/${file}.png`}
+      alt={file}
       width={size}
       height={size}
-      style={{display:"block",flexShrink:0,objectFit:"contain"}}
+      style={{display:"block",flexShrink:0,objectFit:"contain",borderRadius:8}}
     />
   );
 }
