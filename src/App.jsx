@@ -1912,9 +1912,8 @@ export default function BartFit(){
         body{margin:0;background:#05090F;}
       `}</style>
       {/* App header */}
-      <div style={{background:C.bg,maxWidth:430,margin:"0 auto",position:"sticky",top:0,zIndex:50,borderBottom:`1px solid ${C.border}`,padding:"12px 16px 10px",display:"flex",alignItems:"center",gap:2}}>
-        <span style={{fontFamily:F.t,fontWeight:800,fontSize:30,letterSpacing:1.5,background:`linear-gradient(135deg,${C.accent},#8DDB00)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>BART</span>
-        <span style={{fontFamily:F.t,fontWeight:800,fontSize:30,letterSpacing:1.5,color:C.text}}>FIT</span>
+      <div style={{background:C.bg,maxWidth:430,margin:"0 auto",position:"sticky",top:0,zIndex:50,borderBottom:`1px solid ${C.border}`,padding:"10px 16px 8px",display:"flex",alignItems:"center",gap:2}}>
+        <img src="/logo.png" alt="BartFit" style={{height:38,objectFit:"contain"}}/>
         <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:8}}>
           <div style={{background:C.accentDim,border:`1px solid ${C.accent}44`,borderRadius:8,padding:"3px 8px",fontSize:10,color:C.accent,fontWeight:700,fontFamily:F.t}}>v3</div>
           <div style={{width:32,height:32,borderRadius:10,background:`${WORKOUTS.find(w=>w.id===profile.goal)?.color||C.accent}22`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,border:`1px solid ${WORKOUTS.find(w=>w.id===profile.goal)?.color||C.accent}33`}}>{profile.name?profile.name[0].toUpperCase():"?"}</div>
