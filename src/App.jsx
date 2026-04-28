@@ -579,182 +579,563 @@ function getFigType(nom){
 }
 
 function StickFigure({type="generic",color=C.accent,size=64}){
-  const s={stroke:color,strokeWidth:"2.4",strokeLinecap:"round",strokeLinejoin:"round",fill:"none"};
-  const hd={fill:color,stroke:"none"};const gr={...s,strokeWidth:"1",strokeOpacity:"0.2"};
-  const bar={...s,strokeWidth:"3.5"};const pl={...s,strokeWidth:"4"};
+  // Traits épais, articulations marquées, équipement visible, flèches de mouvement
+  const s={stroke:color,strokeWidth:"4.5",strokeLinecap:"round",strokeLinejoin:"round",fill:"none"};
+  const h={fill:color,stroke:"none"};
+  const j={fill:color,stroke:"none"};
+  const gr={stroke:color,strokeWidth:"1.5",strokeOpacity:"0.2",fill:"none"};
+  const J=({cx,cy,r=5})=><circle cx={cx} cy={cy} r={r} {...j}/>;
+  const Arr=({x1,y1,x2,y2})=><g stroke={color} strokeWidth="2.2" fill="none" strokeLinecap="round">
+    <line x1={x1} y1={y1} x2={x2} y2={y2} strokeDasharray="4,3"/>
+    <line x1={x2-5} y1={y2+7} x2={x2} y2={y2}/><line x1={x2+5} y1={y2+7} x2={x2} y2={y2}/>
+  </g>;
+  const Barbell=({x1,y1,x2,y2})=><g stroke={color} strokeLinecap="round">
+    <line x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="5" fill="none"/>
+    <line x1={x1} y1={y1-5} x2={x1} y2={y1+5} strokeWidth="7" fill="none"/>
+    <line x1={x2} y1={y2-5} x2={x2} y2={y2+5} strokeWidth="7" fill="none"/>
+  </g>;
+
   const figs={
-    generic:(<g {...s}><circle cx="40" cy="9" r="8" {...hd}/><line x1="40" y1="17" x2="40" y2="46"/><line x1="26" y1="24" x2="54" y2="24"/><line x1="26" y1="24" x2="18" y2="40"/><line x1="18" y1="40" x2="14" y2="52"/><line x1="54" y1="24" x2="62" y2="40"/><line x1="62" y1="40" x2="66" y2="52"/><line x1="33" y1="46" x2="26" y2="64"/><line x1="26" y1="64" x2="22" y2="78"/><line x1="47" y1="46" x2="54" y2="64"/><line x1="54" y1="64" x2="58" y2="78"/></g>),
-    pushup:(<g {...s}><circle cx="10" cy="30" r="7" {...hd}/><line x1="10" y1="37" x2="17" y2="40"/><line x1="17" y1="40" x2="56" y2="48"/><line x1="27" y1="42" x2="24" y2="55"/><line x1="24" y1="55" x2="19" y2="62"/><line x1="44" y1="46" x2="42" y2="58"/><line x1="42" y1="58" x2="37" y2="64"/><line x1="56" y1="48" x2="64" y2="42"/><line x1="64" y1="42" x2="70" y2="53"/><line x1="56" y1="50" x2="63" y2="44"/><line x1="63" y1="44" x2="69" y2="55"/><line x1="14" y1="65" x2="72" y2="65" {...gr}/></g>),
-    squat:(<g {...s}><circle cx="40" cy="10" r="8" {...hd}/><line x1="40" y1="18" x2="40" y2="45"/><line x1="28" y1="27" x2="18" y2="35"/><line x1="18" y1="35" x2="13" y2="45"/><line x1="52" y1="27" x2="62" y2="35"/><line x1="62" y1="35" x2="67" y2="45"/><line x1="33" y1="45" x2="18" y2="58"/><line x1="18" y1="58" x2="16" y2="76"/><line x1="47" y1="45" x2="62" y2="58"/><line x1="62" y1="58" x2="64" y2="76"/><line x1="10" y1="77" x2="70" y2="77" {...gr}/></g>),
-    deadlift:(<g {...s}><circle cx="15" cy="18" r="7" {...hd}/><line x1="15" y1="25" x2="20" y2="28"/><line x1="20" y1="28" x2="50" y2="54"/><line x1="26" y1="34" x2="28" y2="58"/><line x1="40" y1="44" x2="42" y2="63"/><line x1="22" y1="60" x2="48" y2="60" {...bar}/><line x1="20" y1="56" x2="20" y2="64" {...pl}/><line x1="50" y1="56" x2="50" y2="64" {...pl}/><line x1="50" y1="54" x2="44" y2="68"/><line x1="44" y1="68" x2="42" y2="80"/><line x1="50" y1="56" x2="56" y2="68"/><line x1="56" y1="68" x2="58" y2="80"/></g>),
-    bench:(<g {...s}><circle cx="9" cy="44" r="7" {...hd}/><line x1="9" y1="51" x2="58" y2="54"/><rect x="4" y="57" width="58" height="5" rx="2" {...s} strokeWidth="2"/><line x1="22" y1="52" x2="20" y2="30"/><line x1="42" y1="53" x2="42" y2="30"/><line x1="14" y1="30" x2="48" y2="30" {...bar}/><line x1="12" y1="26" x2="12" y2="34" {...pl}/><line x1="50" y1="26" x2="50" y2="34" {...pl}/><line x1="58" y1="54" x2="65" y2="60"/><line x1="65" y1="60" x2="68" y2="72"/></g>),
-    press:(<g {...s}><circle cx="40" cy="12" r="8" {...hd}/><line x1="40" y1="20" x2="40" y2="50"/><line x1="28" y1="26" x2="20" y2="14"/><line x1="20" y1="14" x2="18" y2="5"/><line x1="52" y1="26" x2="60" y2="14"/><line x1="60" y1="14" x2="62" y2="5"/><line x1="12" y1="5" x2="68" y2="5" {...bar}/><line x1="10" y1="1" x2="10" y2="9" {...pl}/><line x1="70" y1="1" x2="70" y2="9" {...pl}/><line x1="34" y1="50" x2="28" y2="66"/><line x1="28" y1="66" x2="24" y2="80"/><line x1="46" y1="50" x2="52" y2="66"/><line x1="52" y1="66" x2="56" y2="80"/></g>),
-    row:(<g {...s}><circle cx="14" cy="16" r="7" {...hd}/><line x1="14" y1="23" x2="20" y2="26"/><line x1="20" y1="26" x2="52" y2="54"/><line x1="30" y1="36" x2="40" y2="29"/><line x1="40" y1="29" x2="46" y2="24"/><line x1="40" y1="44" x2="50" y2="38"/><line x1="50" y1="38" x2="55" y2="32"/><line x1="43" y1="22" x2="54" y2="22" {...bar}/><circle cx="41" cy="22" r="3.5" fill={color}/><circle cx="56" cy="22" r="3.5" fill={color}/><line x1="52" y1="54" x2="46" y2="68"/><line x1="46" y1="68" x2="44" y2="80"/><line x1="52" y1="56" x2="58" y2="68"/><line x1="58" y1="68" x2="60" y2="80"/></g>),
-    plank:(<g {...s}><circle cx="10" cy="36" r="7" {...hd}/><line x1="10" y1="43" x2="17" y2="46"/><line x1="17" y1="46" x2="62" y2="50"/><line x1="28" y1="47" x2="26" y2="64"/><line x1="46" y1="49" x2="44" y2="64"/><line x1="62" y1="50" x2="70" y2="46"/><line x1="70" y1="46" x2="74" y2="56"/><line x1="62" y1="52" x2="69" y2="48"/><line x1="69" y1="48" x2="73" y2="58"/><line x1="22" y1="66" x2="76" y2="66" {...gr}/></g>),
-    lunge:(<g {...s}><circle cx="40" cy="9" r="8" {...hd}/><line x1="40" y1="17" x2="40" y2="46"/><line x1="28" y1="24" x2="22" y2="38"/><line x1="22" y1="38" x2="24" y2="46"/><line x1="52" y1="24" x2="58" y2="38"/><line x1="58" y1="38" x2="56" y2="46"/><line x1="46" y1="46" x2="60" y2="58"/><line x1="60" y1="58" x2="60" y2="78"/><line x1="56" y1="78" x2="64" y2="78"/><line x1="34" y1="46" x2="20" y2="58"/><line x1="20" y1="58" x2="22" y2="76"/><line x1="18" y1="76" x2="26" y2="76"/></g>),
-    hipthrust:(<g {...s}><rect x="3" y="32" width="7" height="32" rx="2" strokeWidth="1.5" stroke={color} fillOpacity="0.2" fill={color}/><circle cx="13" cy="38" r="7" {...hd}/><line x1="13" y1="45" x2="20" y2="48"/><line x1="20" y1="48" x2="36" y2="44"/><line x1="36" y1="44" x2="50" y2="56"/><line x1="50" y1="56" x2="46" y2="72"/><line x1="42" y1="72" x2="50" y2="72"/><line x1="36" y1="46" x2="48" y2="58"/><line x1="48" y1="58" x2="44" y2="74"/><line x1="40" y1="74" x2="48" y2="74"/><line x1="8" y1="75" x2="56" y2="75" {...gr}/></g>),
-    run:(<g {...s}><circle cx="46" cy="10" r="8" {...hd}/><line x1="46" y1="18" x2="42" y2="48"/><line x1="36" y1="28" x2="26" y2="38"/><line x1="26" y1="38" x2="22" y2="30"/><line x1="40" y1="30" x2="52" y2="34"/><line x1="52" y1="34" x2="56" y2="24"/><line x1="46" y1="48" x2="58" y2="60"/><line x1="58" y1="60" x2="62" y2="76"/><line x1="58" y1="76" x2="66" y2="74"/><line x1="38" y1="48" x2="26" y2="60"/><line x1="26" y1="60" x2="18" y2="72"/><line x1="14" y1="72" x2="22" y2="70"/></g>),
-    stretch:(<g {...s}><circle cx="12" cy="30" r="7" {...hd}/><line x1="12" y1="37" x2="16" y2="42"/><line x1="16" y1="42" x2="26" y2="52"/><line x1="26" y1="52" x2="44" y2="58"/><line x1="20" y1="44" x2="52" y2="60"/><line x1="22" y1="47" x2="55" y2="62"/><line x1="44" y1="60" x2="68" y2="60"/><line x1="44" y1="62" x2="68" y2="62"/><line x1="64" y1="57" x2="70" y2="63"/><line x1="10" y1="65" x2="70" y2="65" {...gr}/></g>),
-    curl:(<g {...s}><circle cx="40" cy="9" r="8" {...hd}/><line x1="40" y1="17" x2="40" y2="48"/><line x1="28" y1="24" x2="20" y2="40"/><line x1="20" y1="40" x2="18" y2="52"/><line x1="52" y1="24" x2="58" y2="40"/><line x1="58" y1="40" x2="50" y2="24"/><line x1="44" y1="22" x2="56" y2="22" {...bar}/><circle cx="43" cy="22" r="4" fill={color}/><circle cx="57" cy="22" r="4" fill={color}/><line x1="34" y1="48" x2="28" y2="65"/><line x1="28" y1="65" x2="24" y2="80"/><line x1="46" y1="48" x2="52" y2="65"/><line x1="52" y1="65" x2="56" y2="80"/></g>),
-    crunch:(<g {...s}><circle cx="14" cy="28" r="7" {...hd}/><line x1="14" y1="35" x2="20" y2="40"/><line x1="20" y1="40" x2="36" y2="46"/><line x1="14" y1="35" x2="10" y2="26"/><line x1="10" y1="26" x2="20" y2="22"/><line x1="20" y1="40" x2="22" y2="30"/><line x1="36" y1="46" x2="56" y2="44"/><line x1="56" y1="44" x2="60" y2="58"/><line x1="56" y1="58" x2="64" y2="62"/><line x1="36" y1="48" x2="52" y2="47"/><line x1="52" y1="47" x2="56" y2="62"/><line x1="10" y1="65" x2="66" y2="65" {...gr}/></g>),
-    dip:(<g {...s}><line x1="8" y1="36" x2="28" y2="36" strokeWidth="3"/><line x1="52" y1="36" x2="72" y2="36" strokeWidth="3"/><circle cx="40" cy="9" r="8" {...hd}/><line x1="40" y1="17" x2="40" y2="46"/><line x1="28" y1="24" x2="20" y2="36"/><line x1="20" y1="36" x2="18" y2="48"/><line x1="52" y1="24" x2="60" y2="36"/><line x1="60" y1="36" x2="62" y2="48"/><line x1="34" y1="46" x2="30" y2="60"/><line x1="30" y1="60" x2="34" y2="72"/><line x1="46" y1="46" x2="50" y2="60"/><line x1="50" y1="60" x2="46" y2="72"/></g>),
+    // ─── POMPES : corps horizontal, coude 90° clairement visible ───
+    pushup:(<g {...s}>
+      <circle cx="10" cy="30" r="9" {...h}/>
+      <line x1="10" y1="39" x2="18" y2="44"/><line x1="18" y1="44" x2="60" y2="52"/>
+      {/* BRAS AVANT — coude à 90°, clairement visible */}
+      <line x1="29" y1="46" x2="26" y2="60"/><J cx={26} cy={60}/>
+      <line x1="26" y1="60" x2="18" y2="67"/>
+      <line x1="46" y1="49" x2="44" y2="62"/><J cx={44} cy={62}/>
+      <line x1="44" y1="62" x2="36" y2="67"/>
+      <line x1="60" y1="52" x2="68" y2="44"/><line x1="68" y1="44" x2="74" y2="56"/>
+      <line x1="60" y1="54" x2="67" y2="46"/><line x1="67" y1="46" x2="73" y2="58"/>
+      <line x1="12" y1="69" x2="76" y2="69" {...gr}/>
+      <Arr x1={72} y1={54} x2={72} y2={36}/>
+    </g>),
 
-    // ── Nouvelles figures pour Cuisses & Fessiers ──
+    // ─── SQUAT : genoux très fléchis vers l'extérieur, cuisses horizontales ───
+    squat:(<g {...s}>
+      <circle cx="45" cy="7" r="9" {...h}/>
+      <line x1="45" y1="16" x2="45" y2="44"/>
+      <line x1="31" y1="25" x2="16" y2="36"/><line x1="16" y1="36" x2="10" y2="47"/>
+      <line x1="59" y1="25" x2="74" y2="36"/><line x1="74" y1="36" x2="80" y2="47"/>
+      <line x1="37" y1="44" x2="12" y2="62"/><J cx={12} cy={62} r={6}/>
+      <line x1="12" y1="62" x2="10" y2="82"/>
+      <line x1="53" y1="44" x2="78" y2="62"/><J cx={78} cy={62} r={6}/>
+      <line x1="78" y1="62" x2="80" y2="82"/>
+      <line x1="4" y1="83" x2="86" y2="83" {...gr}/>
+      <Arr x1={45} y1={80} x2={45} y2={58}/>
+    </g>),
 
-    // WALL SIT : dos au mur, genoux 90°, cuisses horizontales, tibias verticaux
+    // ─── SOULEVÉ DE TERRE : dos droit incliné, BARRE au niveau des tibias ───
+    deadlift:(<g {...s}>
+      <circle cx="16" cy="15" r="9" {...h}/>
+      <line x1="16" y1="24" x2="22" y2="28"/><line x1="22" y1="28" x2="54" y2="56"/>
+      <line x1="28" y1="36" x2="30" y2="62"/>
+      <line x1="42" y1="48" x2="44" y2="66"/>
+      <Barbell x1={22} y1={66} x2={50} y2={66}/>
+      <line x1="54" y1="56" x2="46" y2="72"/><J cx={46} cy={72}/>
+      <line x1="46" y1="72" x2="42" y2="83"/>
+      <line x1="54" y1="58" x2="58" y2="72"/><J cx={58} cy={72}/>
+      <line x1="58" y1="72" x2="60" y2="83"/>
+      <Arr x1={60} y1={62} x2={60} y2={44}/>
+    </g>),
+
+    // ─── DÉVELOPPÉ COUCHÉ : allongé, BARRE poussée vers le haut ───
+    bench:(<g {...s}>
+      <circle cx="8" cy="42" r="9" {...h}/>
+      <line x1="8" y1="51" x2="58" y2="55"/>
+      <rect x="3" y="59" width="57" height="6" rx="3" strokeWidth="2.5" stroke={color} fill="none"/>
+      <line x1="22" y1="53" x2="20" y2="28"/>
+      <line x1="40" y1="54" x2="40" y2="28"/>
+      <Barbell x1={12} y1={28} x2={48} y2={28}/>
+      <line x1="58" y1="55" x2="66" y2="62"/><J cx={66} cy={62}/>
+      <line x1="66" y1="62" x2="70" y2="76"/>
+      <Arr x1={30} y1={50} x2={30} y2={30}/>
+    </g>),
+
+    // ─── DÉVELOPPÉ MILITAIRE : BARRE AU-DESSUS DE LA TÊTE, bras tendus ───
+    press:(<g {...s}>
+      <circle cx="44" cy="16" r="9" {...h}/>
+      <line x1="44" y1="25" x2="44" y2="54"/>
+      {/* BRAS TENDUS vers le haut — c'est la clé */}
+      <line x1="30" y1="32" x2="20" y2="10"/><line x1="58" y1="32" x2="68" y2="10"/>
+      <Barbell x1={12} y1={8} x2={76} y2={8}/>
+      <line x1="36" y1="54" x2="28" y2="70"/><J cx={28} cy={70}/>
+      <line x1="28" y1="70" x2="24" y2="83"/>
+      <line x1="52" y1="54" x2="60" y2="70"/><J cx={60} cy={70}/>
+      <line x1="60" y1="70" x2="64" y2="83"/>
+      <Arr x1={44} y1={24} x2={44} y2={8}/>
+    </g>),
+
+    // ─── TIRAGE / ROW : torso à 45°, COUDE TIRÉ vers la hanche ───
+    row:(<g {...s}>
+      <circle cx="14" cy="14" r="9" {...h}/>
+      <line x1="14" y1="23" x2="20" y2="27"/><line x1="20" y1="27" x2="54" y2="56"/>
+      {/* BRAS qui tire — coude ramené vers la hanche */}
+      <line x1="30" y1="37" x2="42" y2="27"/><J cx={42} cy={27}/>
+      <line x1="42" y1="27" x2="50" y2="22"/>
+      <line x1="44" y1="46" x2="48" y2="36"/>
+      {/* Haltère à la main */}
+      <circle cx="49" cy="20" r="5" {...j}/>
+      <circle cx="54" cy="20" r="5" {...j}/>
+      <line x1="49" y1="20" x2="54" y2="20" strokeWidth="4"/>
+      <line x1="54" y1="56" x2="46" y2="72"/><J cx={46} cy={72}/>
+      <line x1="46" y1="72" x2="42" y2="83"/>
+      <line x1="54" y1="58" x2="58" y2="72"/>
+      <line x1="58" y1="72" x2="60" y2="83"/>
+      <Arr x1={36} y1={40} x2={44} y2={26}/>
+    </g>),
+
+    // ─── PLANCHE/GAINAGE : corps parfaitement HORIZONTAL ───
+    plank:(<g {...s}>
+      <circle cx="8" cy="34" r="9" {...h}/>
+      <line x1="8" y1="43" x2="18" y2="48"/><line x1="18" y1="48" x2="70" y2="54"/>
+      <line x1="30" y1="49" x2="28" y2="68"/>
+      <line x1="52" y1="52" x2="50" y2="68"/>
+      <line x1="70" y1="54" x2="78" y2="47"/><line x1="78" y1="47" x2="83" y2="58"/>
+      <line x1="70" y1="56" x2="77" y2="49"/><line x1="77" y1="49" x2="82" y2="60"/>
+      <line x1="22" y1="70" x2="84" y2="70" {...gr}/>
+    </g>),
+
+    // ─── FENTE : jambe avant 90°, jambe arrière vers le sol ───
+    lunge:(<g {...s}>
+      <circle cx="44" cy="8" r="9" {...h}/>
+      <line x1="44" y1="17" x2="44" y2="46"/>
+      <line x1="30" y1="26" x2="22" y2="40"/><line x1="56" y1="26" x2="64" y2="40"/>
+      {/* JAMBE AVANT : genou à 90° */}
+      <line x1="50" y1="46" x2="66" y2="60"/><J cx={66} cy={60} r={6}/>
+      <line x1="66" y1="60" x2="66" y2="82"/>
+      <line x1="60" y1="82" x2="72" y2="82"/>
+      {/* JAMBE ARRIÈRE : genou vers le bas */}
+      <line x1="38" y1="46" x2="20" y2="60"/><J cx={20} cy={60} r={6}/>
+      <line x1="20" y1="60" x2="22" y2="80"/>
+      <line x1="16" y1="80" x2="26" y2="80"/>
+      <Arr x1={44} y1={66} x2={44} y2={50}/>
+    </g>),
+
+    // ─── HIP THRUST : HANCHES EN L'AIR, dos sur le banc ───
+    hipthrust:(<g {...s}>
+      <rect x="2" y="28" width="8" height="36" rx="3" strokeWidth="3" stroke={color} fill={color} fillOpacity="0.2"/>
+      <circle cx="14" cy="36" r="9" {...h}/>
+      <line x1="14" y1="45" x2="22" y2="50"/>
+      {/* HANCHES EN HAUT — c'est la clé visuelle */}
+      <line x1="22" y1="50" x2="44" y2="44"/>
+      <J cx={44} cy={44} r={6}/>
+      <line x1="44" y1="44" x2="60" y2="58"/><J cx={60} cy={58}/>
+      <line x1="60" y1="58" x2="56" y2="78"/>
+      <line x1="50" y1="78" x2="60" y2="78"/>
+      <line x1="44" y1="46" x2="58" y2="61"/><line x1="58" y1="61" x2="54" y2="80"/>
+      <line x1="8" y1="79" x2="62" y2="79" {...gr}/>
+      <Arr x1={44} y1={54} x2={44} y2={38}/>
+    </g>),
+
+    // ─── COURSE : foulée claire, genoux alternés ───
+    run:(<g {...s}>
+      <circle cx="48" cy="8" r="9" {...h}/>
+      <line x1="48" y1="17" x2="44" y2="46"/>
+      {/* Bras qui pompent */}
+      <line x1="38" y1="26" x2="24" y2="38"/><J cx={24} cy={38}/>
+      <line x1="24" y1="38" x2="18" y2="28"/>
+      <line x1="42" y1="28" x2="56" y2="34"/><J cx={56} cy={34}/>
+      <line x1="56" y1="34" x2="62" y2="24"/>
+      {/* Jambe avant : genou levé */}
+      <line x1="48" y1="46" x2="64" y2="62"/><J cx={64} cy={62} r={6}/>
+      <line x1="64" y1="62" x2="70" y2="80"/>
+      <line x1="66" y1="80" x2="74" y2="78"/>
+      {/* Jambe arrière : étendue */}
+      <line x1="40" y1="46" x2="22" y2="62"/><J cx={22} cy={62} r={6}/>
+      <line x1="22" y1="62" x2="14" y2="76"/>
+      <line x1="10" y1="76" x2="18" y2="74"/>
+    </g>),
+
+    // ─── ÉTIREMENT : assis, torse PLIÉ sur les jambes tendues ───
+    stretch:(<g {...s}>
+      <circle cx="10" cy="26" r="9" {...h}/>
+      <line x1="10" y1="35" x2="16" y2="42"/>
+      <line x1="16" y1="42" x2="32" y2="56"/>
+      <line x1="32" y1="56" x2="52" y2="63"/>
+      {/* Bras qui s'allongent vers les pieds */}
+      <line x1="20" y1="46" x2="58" y2="68"/>
+      <line x1="22" y1="50" x2="60" y2="70"/>
+      {/* Jambes tendues au sol */}
+      <line x1="52" y1="65" x2="76" y2="65"/>
+      <line x1="52" y1="67" x2="76" y2="67"/>
+      <line x1="72" y1="60" x2="78" y2="70"/>
+      <line x1="8" y1="70" x2="78" y2="70" {...gr}/>
+    </g>),
+
+    // ─── CURL BICEPS : avant-bras plié VERS L'ÉPAULE ───
+    curl:(<g {...s}>
+      <circle cx="44" cy="8" r="9" {...h}/>
+      <line x1="44" y1="17" x2="44" y2="48"/>
+      <line x1="30" y1="24" x2="22" y2="42"/><line x1="22" y1="42" x2="20" y2="54"/>
+      {/* AVANT-BRAS PLIÉ — l'haltère est à l'épaule */}
+      <line x1="58" y1="24" x2="64" y2="42"/><J cx={64} cy={42} r={6}/>
+      <line x1="64" y1="42" x2="54" y2="22"/>
+      <circle cx="50" cy="18" r="6" {...j}/>
+      <circle cx="58" cy="18" r="6" {...j}/>
+      <line x1="50" y1="18" x2="58" y2="18" strokeWidth="5"/>
+      <line x1="36" y1="48" x2="28" y2="66"/><J cx={28} cy={66}/>
+      <line x1="28" y1="66" x2="24" y2="80"/>
+      <line x1="52" y1="48" x2="60" y2="66"/><J cx={60} cy={66}/>
+      <line x1="60" y1="66" x2="64" y2="80"/>
+    </g>),
+
+    // ─── CRUNCH : épaules LEVÉES du sol, lombaires restent ───
+    crunch:(<g {...s}>
+      <circle cx="12" cy="24" r="9" {...h}/>
+      <line x1="12" y1="33" x2="20" y2="40"/>
+      <line x1="20" y1="40" x2="38" y2="46"/>
+      <line x1="12" y1="33" x2="8" y2="22"/><line x1="8" y1="22" x2="20" y2="18"/>
+      <line x1="22" y1="40" x2="24" y2="28"/>
+      <line x1="38" y1="46" x2="60" y2="44"/><J cx={60} cy={44} r={6}/>
+      <line x1="60" y1="44" x2="64" y2="64"/>
+      <line x1="58" y1="64" x2="68" y2="66"/>
+      <line x1="38" y1="48" x2="56" y2="48"/>
+      <line x1="56" y1="48" x2="60" y2="66"/>
+      <line x1="8" y1="68" x2="70" y2="68" {...gr}/>
+      <Arr x1={24} y1={45} x2={14} y2={30}/>
+    </g>),
+
+    // ─── DIPS : entre DEUX BARRES, coudes fléchis ───
+    dip:(<g {...s}>
+      <line x1="6" y1="32" x2="30" y2="32" strokeWidth="6"/>
+      <line x1="52" y1="32" x2="76" y2="32" strokeWidth="6"/>
+      <circle cx="41" cy="8" r="9" {...h}/>
+      <line x1="41" y1="17" x2="41" y2="46"/>
+      <line x1="27" y1="22" x2="18" y2="32"/><J cx={18} cy={32} r={5}/>
+      <line x1="18" y1="32" x2="14" y2="50"/>
+      <line x1="55" y1="22" x2="64" y2="32"/><J cx={64} cy={32} r={5}/>
+      <line x1="64" y1="32" x2="68" y2="50"/>
+      <line x1="35" y1="46" x2="30" y2="64"/><J cx={30} cy={64}/>
+      <line x1="30" y1="64" x2="34" y2="78"/>
+      <line x1="47" y1="46" x2="52" y2="64"/><J cx={52} cy={64}/>
+      <line x1="52" y1="64" x2="48" y2="78"/>
+      <Arr x1={41} y1={46} x2={41} y2={30}/>
+    </g>),
+
+    // ─── WALL SIT : MUR visible, cuisses HORIZONTALES, tibias VERTICAUX ───
     wallsit:(<g {...s}>
-      {/* Mur vertical */}
-      <line x1="6" y1="8" x2="6" y2="78" stroke={color} strokeWidth="3" strokeOpacity="0.35"/>
-      {/* Tête appuyée au mur */}
-      <circle cx="20" cy="14" r="8" {...hd}/>
-      {/* Corps VERTICAL (dos au mur) */}
-      <line x1="20" y1="22" x2="20" y2="50"/>
-      {/* Bras posés sur les cuisses */}
-      <line x1="20" y1="34" x2="38" y2="50"/>
-      <line x1="20" y1="36" x2="36" y2="52"/>
-      {/* Cuisse avantbras HORIZONTALE */}
-      <line x1="20" y1="50" x2="56" y2="50"/>
-      <line x1="20" y1="52" x2="54" y2="52"/>
-      {/* Tibia VERTICAL (genou à 90°) */}
-      <line x1="56" y1="50" x2="56" y2="74"/>
-      <line x1="54" y1="52" x2="54" y2="76"/>
-      {/* Pied */}
-      <line x1="50" y1="74" x2="60" y2="74"/>
-      <line x1="8" y1="76" x2="62" y2="76" {...gr}/>
+      <line x1="6" y1="6" x2="6" y2="82" strokeWidth="6" strokeOpacity="0.5"/>
+      <circle cx="20" cy="12" r="9" {...h}/>
+      <line x1="20" y1="21" x2="20" y2="54"/>
+      <line x1="20" y1="36" x2="38" y2="54"/>
+      {/* CUISSE PARFAITEMENT HORIZONTALE */}
+      <line x1="20" y1="54" x2="62" y2="54" strokeWidth="5"/>
+      <J cx={62} cy={54} r={6}/>
+      {/* TIBIA PARFAITEMENT VERTICAL */}
+      <line x1="62" y1="54" x2="62" y2="78" strokeWidth="5"/>
+      <line x1="56" y1="78" x2="68" y2="78"/>
+      <line x1="8" y1="80" x2="68" y2="80" {...gr}/>
     </g>),
 
-    // DONKEY KICK : à 4 pattes, une jambe poussée vers le plafond
+    // ─── DONKEY KICK : à 4 pattes, UNE JAMBE DROITE vers le plafond ───
     donkeykick:(<g {...s}>
-      {/* Tête penchée (face vers le bas) */}
-      <circle cx="12" cy="42" r="6" {...hd}/>
+      <circle cx="12" cy="40" r="8" {...h}/>
       <line x1="12" y1="48" x2="18" y2="52"/>
-      {/* Corps horizontal */}
       <line x1="18" y1="52" x2="48" y2="54"/>
-      {/* Bras avant (main au sol) */}
-      <line x1="22" y1="52" x2="20" y2="66"/>
-      <line x1="32" y1="52" x2="30" y2="66"/>
-      {/* Jambe de support (genou au sol) */}
-      <line x1="48" y1="54" x2="46" y2="66"/>
-      <line x1="46" y1="66" x2="42" y2="74"/>
-      {/* Jambe BOTTÉE vers le haut ↑ */}
-      <line x1="48" y1="54" x2="60" y2="40"/>
-      <line x1="60" y1="40" x2="66" y2="30"/>
-      {/* Indicateur de direction */}
-      <line x1="62" y1="24" x2="68" y2="28" strokeWidth="1.5"/>
-      <line x1="62" y1="24" x2="66" y2="18" strokeWidth="1.5"/>
-      <line x1="62" y1="24" x2="56" y2="20" strokeWidth="1.5"/>
-      <line x1="16" y1="68" x2="48" y2="68" {...gr}/>
+      <line x1="22" y1="52" x2="18" y2="68"/>
+      <line x1="36" y1="52" x2="32" y2="68"/>
+      <line x1="48" y1="54" x2="44" y2="68"/><J cx={44} cy={68}/>
+      <line x1="44" y1="68" x2="38" y2="78"/>
+      {/* JAMBE VERS LE PLAFOND — la clé */}
+      <line x1="48" y1="54" x2="64" y2="36"/><J cx={64} cy={36} r={6}/>
+      <line x1="64" y1="36" x2="72" y2="20"/>
+      <line x1="68" y1="20" x2="76" y2="24"/>
+      <line x1="68" y1="20" x2="70" y2="12"/>
+      <Arr x1={72} y1={28} x2={72} y2={14}/>
+      <line x1="12" y1="70" x2="50" y2="70" {...gr}/>
     </g>),
 
-    // CLAMSHELL : allongé sur le côté, genou du dessus levé (ouverture en coquillage)
+    // ─── CLAMSHELL : allongé sur le côté, genou du DESSUS LEVÉ ───
     clamshell:(<g {...s}>
-      {/* Tête reposant sur le bras */}
-      <circle cx="12" cy="46" r="7" {...hd}/>
-      {/* Bras support sous la tête */}
-      <line x1="12" y1="53" x2="8" y2="44"/>
-      <line x1="8" y1="44" x2="16" y2="40"/>
-      {/* Corps horizontal (allongé sur le côté) */}
-      <line x1="12" y1="53" x2="44" y2="58"/>
-      {/* Jambe BASSE (au sol) — genou fléchi vers l'avant */}
-      <line x1="44" y1="58" x2="56" y2="66"/>
-      <line x1="56" y1="66" x2="54" y2="76"/>
-      {/* Jambe HAUTE (genou levé vers le plafond) */}
-      <line x1="44" y1="56" x2="58" y2="44"/>
-      <line x1="58" y1="44" x2="56" y2="58"/>
-      {/* Flèche indiquant le mouvement d'ouverture ↑ */}
-      <line x1="56" y1="38" x2="60" y2="42" strokeWidth="1.5"/>
-      <line x1="56" y1="38" x2="50" y2="36" strokeWidth="1.5"/>
-      {/* Sol */}
-      <line x1="6" y1="78" x2="66" y2="78" {...gr}/>
+      <circle cx="10" cy="44" r="8" {...h}/>
+      <line x1="10" y1="52" x2="8" y2="42"/><line x1="8" y1="42" x2="16" y2="36"/>
+      <line x1="10" y1="52" x2="44" y2="58"/>
+      {/* Genou du bas — reste au sol */}
+      <line x1="44" y1="58" x2="60" y2="68"/><J cx={60} cy={68}/>
+      <line x1="60" y1="68" x2="56" y2="80"/>
+      {/* Genou du DESSUS — levé vers le plafond */}
+      <line x1="44" y1="56" x2="62" y2="40"/><J cx={62} cy={40} r={6}/>
+      <line x1="62" y1="40" x2="58" y2="56"/>
+      <Arr x1={64} y1={48} x2={64} y2={32}/>
+      <line x1="6" y1="82" x2="66" y2="82" {...gr}/>
     </g>),
 
-    // LEG CURL : allongé sur le ventre, jambe repliée vers les fessiers
+    // ─── LEG CURL : face vers le BAS, jambe repliée vers les fessiers ───
     legcurl:(<g {...s}>
-      {/* Tête tournée de côté (allongé face vers le bas) */}
-      <circle cx="11" cy="38" r="6" {...hd}/>
-      <line x1="11" y1="44" x2="16" y2="48"/>
-      {/* Corps allongé FACE VERS LE BAS (prone) */}
-      <line x1="16" y1="48" x2="54" y2="52"/>
-      {/* Banc / surface */}
-      <line x1="6" y1="56" x2="68" y2="56" stroke={color} strokeWidth="1.5" strokeOpacity="0.3"/>
-      {/* Bras pliés sous le corps */}
-      <line x1="22" y1="50" x2="20" y2="60"/>
-      {/* Jambe droite (référence, au repos) */}
-      <line x1="54" y1="52" x2="62" y2="54"/>
-      <line x1="62" y1="54" x2="64" y2="62"/>
-      {/* Jambe REPLIÉE vers les fessiers ↑ (le mouvement) */}
-      <line x1="54" y1="52" x2="62" y2="44"/>
-      <line x1="62" y1="44" x2="66" y2="34"/>
-      <line x1="64" y1="30" x2="70" y2="34" strokeWidth="1.5"/>
-      <line x1="64" y1="30" x2="60" y2="26" strokeWidth="1.5"/>
+      <circle cx="10" cy="34" r="8" {...h}/>
+      <line x1="10" y1="42" x2="16" y2="47"/>
+      <line x1="16" y1="47" x2="54" y2="52"/>
+      <line x1="6" y1="56" x2="70" y2="56" strokeWidth="2" strokeOpacity="0.3"/>
+      <line x1="20" y1="50" x2="18" y2="62"/>
+      <line x1="54" y1="52" x2="62" y2="54"/><J cx={62} cy={54}/>
+      <line x1="62" y1="54" x2="66" y2="68"/>
+      {/* JAMBE REPLIÉE vers les fessiers — la clé */}
+      <line x1="54" y1="52" x2="65" y2="40"/><J cx={65} cy={40} r={6}/>
+      <line x1="65" y1="40" x2="70" y2="26"/>
+      <Arr x1={72} y1={40} x2={72} y2={24}/>
     </g>),
 
-    // GOBLET SQUAT : squat profond en tenant un poids contre la poitrine
+    // ─── GOBLET SQUAT : squat profond + POIDS visible à la poitrine ───
     goblet:(<g {...s}>
-      <circle cx="40" cy="9" r="8" {...hd}/>
-      <line x1="40" y1="17" x2="40" y2="44"/>
-      {/* Bras tenant le poids (kettlebell) face à la poitrine */}
-      <line x1="28" y1="26" x2="32" y2="33"/>
-      <line x1="52" y1="26" x2="48" y2="33"/>
-      {/* Kettlebell (poids arrondi) */}
-      <circle cx="40" cy="31" r="7" {...s} strokeWidth="2.5" fill={color} fillOpacity="0.18"/>
-      <circle cx="40" cy="26" r="2.5" fill={color}/>
-      {/* Squat très profond (stance large) */}
-      <line x1="33" y1="44" x2="12" y2="60"/>
-      <line x1="12" y1="60" x2="10" y2="78"/>
-      <line x1="47" y1="44" x2="68" y2="60"/>
-      <line x1="68" y1="60" x2="70" y2="78"/>
-      <line x1="6" y1="79" x2="74" y2="79" {...gr}/>
+      <circle cx="44" cy="7" r="9" {...h}/>
+      <line x1="44" y1="16" x2="44" y2="44"/>
+      <line x1="30" y1="24" x2="34" y2="34"/><line x1="58" y1="24" x2="54" y2="34"/>
+      {/* KETTLEBELL — clairement visible */}
+      <circle cx="44" cy="30" r="9" strokeWidth="3" stroke={color} fill={color} fillOpacity="0.2"/>
+      <circle cx="44" cy="24" r="3.5" {...j}/>
+      {/* Squat très profond */}
+      <line x1="36" y1="44" x2="10" y2="64"/><J cx={10} cy={64} r={6}/>
+      <line x1="10" y1="64" x2="8" y2="84"/>
+      <line x1="52" y1="44" x2="78" y2="64"/><J cx={78} cy={64} r={6}/>
+      <line x1="78" y1="64" x2="80" y2="84"/>
+      <line x1="2" y1="85" x2="86" y2="85" {...gr}/>
     </g>),
 
-    // LEG PRESS : assis/incliné dans la machine, jambes poussant la plateforme
+    // ─── LEG PRESS : incliné en arrière, jambes poussent la plateforme ───
     legpress:(<g {...s}>
-      {/* Structure machine (dossier incliné) */}
-      <line x1="4" y1="44" x2="34" y2="70" stroke={color} strokeWidth="2" strokeOpacity="0.3"/>
-      <line x1="32" y1="68" x2="56" y2="68" stroke={color} strokeWidth="1.5" strokeOpacity="0.25"/>
-      {/* Tête inclinée */}
-      <circle cx="10" cy="40" r="7" {...hd}/>
-      {/* Corps incliné à ~40° */}
-      <line x1="10" y1="47" x2="36" y2="64"/>
-      {/* Bras sur les accoudoirs */}
-      <line x1="16" y1="52" x2="12" y2="62"/>
-      <line x1="26" y1="58" x2="24" y2="66"/>
-      {/* Cuisse proche du torse (position basse) */}
-      <line x1="36" y1="62" x2="52" y2="50"/>
-      <line x1="36" y1="64" x2="50" y2="54"/>
-      {/* Tibia allant vers la plateforme */}
-      <line x1="52" y1="50" x2="64" y2="42"/>
-      <line x1="50" y1="54" x2="62" y2="46"/>
-      {/* Plateforme (footplate) */}
-      <line x1="60" y1="38" x2="70" y2="38" strokeWidth="3"/>
-      <line x1="60" y1="40" x2="70" y2="40"/>
+      <line x1="4" y1="42" x2="36" y2="68" strokeWidth="3" strokeOpacity="0.3"/>
+      <line x1="34" y1="66" x2="62" y2="66" strokeWidth="2" strokeOpacity="0.25"/>
+      <circle cx="8" cy="38" r="8" {...h}/>
+      <line x1="8" y1="46" x2="36" y2="64"/>
+      <line x1="16" y1="52" x2="12" y2="62"/><line x1="26" y1="58" x2="24" y2="66"/>
+      {/* Jambes poussant vers la plateforme */}
+      <line x1="36" y1="62" x2="56" y2="46"/><J cx={56} cy={46} r={6}/>
+      <line x1="56" y1="46" x2="70" y2="36"/>
+      <line x1="36" y1="64" x2="54" y2="50"/><J cx={54} cy={50} r={5}/>
+      <line x1="54" y1="50" x2="68" y2="40"/>
+      <line x1="66" y1="32" x2="76" y2="32" strokeWidth="6"/>
+      <Arr x1={48} y1={55} x2={60} y2={42}/>
     </g>),
 
-    // ABDUCTOR MACHINE : assis, cuisses qui s'écartent vers l'extérieur
+    // ─── ABDUCTEUR : assis, jambes TRÈS ÉCARTÉES vers l'extérieur ───
     abductor:(<g {...s}>
-      {/* Siège de la machine */}
-      <line x1="22" y1="54" x2="58" y2="54" strokeWidth="2.5"/>
-      {/* Dossier */}
-      <line x1="40" y1="54" x2="40" y2="62" strokeWidth="2" strokeOpacity="0.3"/>
-      <circle cx="40" cy="9" r="8" {...hd}/>
+      <line x1="18" y1="54" x2="62" y2="54" strokeWidth="5"/>
+      <circle cx="40" cy="8" r="9" {...h}/>
       <line x1="40" y1="17" x2="40" y2="52"/>
-      {/* Bras sur les accoudoirs */}
-      <line x1="28" y1="28" x2="20" y2="48"/>
-      <line x1="52" y1="28" x2="60" y2="48"/>
-      {/* Cuisses très ÉCARTÉES (abduction) */}
-      <line x1="34" y1="54" x2="10" y2="64"/>
-      <line x1="10" y1="64" x2="8" y2="78"/>
-      <line x1="46" y1="54" x2="70" y2="64"/>
-      <line x1="70" y1="64" x2="72" y2="78"/>
-      {/* Pads de résistance (petites lignes contre les cuisses) */}
-      <line x1="26" y1="56" x2="20" y2="60" strokeWidth="3" strokeOpacity="0.5"/>
-      <line x1="54" y1="56" x2="60" y2="60" strokeWidth="3" strokeOpacity="0.5"/>
-      {/* Flèches d'écartement */}
-      <line x1="18" y1="58" x2="12" y2="62" strokeWidth="1.5"/>
-      <line x1="62" y1="58" x2="68" y2="62" strokeWidth="1.5"/>
+      <line x1="26" y1="26" x2="16" y2="48"/><line x1="54" y1="26" x2="64" y2="48"/>
+      {/* Jambes TRÈS ÉCARTÉES */}
+      <line x1="32" y1="54" x2="4" y2="70"/><J cx={4} cy={70} r={6}/>
+      <line x1="4" y1="70" x2="2" y2="85"/>
+      <line x1="48" y1="54" x2="76" y2="70"/><J cx={76} cy={70} r={6}/>
+      <line x1="76" y1="70" x2="78" y2="85"/>
+      <line x1="18" y1="56" x2="8" y2="64" strokeWidth="5"/>
+      <line x1="62" y1="56" x2="72" y2="64" strokeWidth="5"/>
+      <Arr x1={4} y1={62} x2={-4} y2={50}/>
+      <Arr x1={76} y1={62} x2={84} y2={50}/>
+    </g>),
+
+    generic:(<g {...s}>
+      <circle cx="44" cy="9" r="9" {...h}/>
+      <line x1="44" y1="18" x2="44" y2="48"/>
+      <line x1="28" y1="26" x2="54" y2="26"/>
+      <line x1="28" y1="26" x2="18" y2="44"/><line x1="18" y1="44" x2="14" y2="56"/>
+      <line x1="54" y1="26" x2="64" y2="44"/><line x1="64" y1="44" x2="68" y2="56"/>
+      <line x1="36" y1="48" x2="28" y2="67"/><J cx={28} cy={67}/>
+      <line x1="28" y1="67" x2="24" y2="82"/>
+      <line x1="52" y1="48" x2="60" y2="67"/><J cx={60} cy={67}/>
+      <line x1="60" y1="67" x2="64" y2="82"/>
     </g>),
   };
-  return (<svg viewBox="0 0 80 85" width={size} height={size} style={{display:"block",flexShrink:0}}>{figs[type]||figs.generic}</svg>);
+  return (<svg viewBox="0 0 90 90" width={size} height={size} style={{display:"block",flexShrink:0}}>{figs[type]||figs.generic}</svg>);
+}
+/* ═══════════════════════════════════════════
+   EXERCISE MODAL — Guidage complet série par série
+═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   EXERCISE MODAL — Guidage complet série par série
+═══════════════════════════════════════════ */
+function ExerciseModal({exercise, exerciseIndex, totalExercises, level, starterMode, goalColor, onClose, onNext, isLast}){
+  const totalSets = starterMode ? 2 : Math.max(2, Math.round(exercise.setsBase * {debutant:0.75,intermediaire:1,avance:1.25}[level]||1));
+  const restTime = {debutant:90, intermediaire:75, avance:60}[level]||75;
+  const repsLabel = {debutant:"12–15",intermediaire:"8–12",avance:"6–8"}[level]||"10–12";
+
+  const [phase, setPhase] = useState("intro"); // intro | active | rest | done
+  const [currentSet, setCurrentSet] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const [restLeft, setRestLeft] = useState(restTime);
+  const [figPhase, setFigPhase] = useState(0); // 0→1 animation for figure
+  const rafRef = useRef(null);
+  const startRef = useRef(Date.now());
+
+  // Animate figure (oscillates 0↔1)
+  useEffect(()=>{
+    const PERIOD = 2200;
+    function tick(){
+      const t = ((Date.now()-startRef.current) % PERIOD) / PERIOD;
+      setFigPhase(Math.sin(t * Math.PI * 2) * 0.5 + 0.5);
+      rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(rafRef.current);
+  },[]);
+
+  // Active timer (counts up)
+  useEffect(()=>{
+    if(phase!=="active") return;
+    const iv = setInterval(()=>setElapsed(e=>e+1), 1000);
+    return ()=>clearInterval(iv);
+  },[phase]);
+
+  // Rest timer (counts down)
+  useEffect(()=>{
+    if(phase!=="rest") return;
+    setRestLeft(restTime);
+    const iv = setInterval(()=>{
+      setRestLeft(r=>{
+        if(r<=1){
+          clearInterval(iv);
+          const next = currentSet + 1;
+          setCurrentSet(next);
+          setElapsed(0);
+          if(next > totalSets) setPhase("done");
+          else setPhase("active");
+          return restTime;
+        }
+        return r-1;
+      });
+    },1000);
+    return ()=>clearInterval(iv);
+  },[phase]);
+
+  const handleStart = ()=>{ setPhase("active"); setCurrentSet(1); setElapsed(0); };
+  const handleSetDone = ()=>{
+    if(currentSet >= totalSets) setPhase("done");
+    else setPhase("rest");
+  };
+  const handleSkip = ()=>{
+    const next = currentSet+1;
+    setCurrentSet(next);
+    setElapsed(0);
+    setPhase("active");
+  };
+
+  const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  const bt = (label, bg, fg, fn, full) => (
+    <button onClick={fn} style={{
+      width: full?"100%":"auto", padding:"16px 24px", borderRadius:14, border:"none",
+      background:bg, color:fg, fontFamily:F.t, fontWeight:800, fontSize:18,
+      cursor:"pointer", letterSpacing:0.5, transition:"all 0.2s",
+    }}>{label}</button>
+  );
+
+  return (
+    <div style={{position:"fixed",inset:0,background:C.bg,zIndex:300,display:"flex",flexDirection:"column",maxWidth:430,margin:"0 auto",fontFamily:F.b}}>
+
+      {/* Header */}
+      <div style={{display:"flex",alignItems:"center",gap:12,padding:"16px 16px 10px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
+        <button onClick={onClose} style={{width:36,height:36,borderRadius:10,border:`1px solid ${C.border}`,background:"transparent",color:C.text,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+        <div style={{flex:1}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1}}>Exercice {exerciseIndex+1}/{totalExercises}</div>
+          <div style={{fontFamily:F.t,fontWeight:800,fontSize:18,color:C.text,lineHeight:1.2}}>{exercise.nom}</div>
+        </div>
+        <div style={{fontSize:11,color:goalColor,fontWeight:700,background:goalColor+"18",border:`1px solid ${goalColor}33`,borderRadius:8,padding:"4px 8px"}}>{exercise.muscle}</div>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{height:3,background:C.border,flexShrink:0}}>
+        <div style={{height:"100%",width:`${((exerciseIndex+1)/totalExercises)*100}%`,background:goalColor,transition:"width 0.5s"}}/>
+      </div>
+
+      {/* Content */}
+      <div style={{flex:1,overflow:"auto",padding:"16px"}}>
+
+        {/* Large figure */}
+        <div style={{display:"flex",justifyContent:"center",marginBottom:16}}>
+          <div style={{
+            background:goalColor+"12",border:`1px solid ${goalColor}33`,borderRadius:20,
+            padding:16,display:"flex",alignItems:"center",justifyContent:"center",
+            width:160,height:160,
+          }}>
+            <StickFigure type={getFigType(exercise.nom)} color={goalColor} size={130}/>
+          </div>
+        </div>
+
+        {/* Phase: INTRO */}
+        {phase==="intro"&&<>
+          <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:14,marginBottom:12}}>
+            <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>📋 Programme</div>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:24,color:goalColor}}>{totalSets} séries × {repsLabel} répétitions</div>
+            <div style={{fontSize:12,color:C.muted,marginTop:4}}>Repos : {restTime}s entre chaque série</div>
+          </div>
+          <div style={{background:goalColor+"12",border:`1px solid ${goalColor}33`,borderRadius:14,padding:14,marginBottom:16,borderLeft:`4px solid ${goalColor}`}}>
+            <div style={{fontSize:11,color:goalColor,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>💡 Clé de l'exercice</div>
+            <div style={{fontSize:13,color:C.text,lineHeight:1.7}}>{exercise.conseil}</div>
+          </div>
+          {exercise.alternatif&&<div style={{background:C.accentDim,border:`1px solid ${C.accent}33`,borderRadius:14,padding:12,marginBottom:16}}>
+            <div style={{fontSize:12,color:C.accent,lineHeight:1.6}}>🏠 {exercise.alternatif}</div>
+          </div>}
+        </>}
+
+        {/* Phase: ACTIVE */}
+        {phase==="active"&&<>
+          {/* Set dots */}
+          <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:16}}>
+            {Array.from({length:totalSets}).map((_,i)=>(
+              <div key={i} style={{width:i===currentSet-1?32:10,height:10,borderRadius:5,background:i<currentSet-1?goalColor:i===currentSet-1?goalColor:C.border,transition:"all 0.3s"}}/>
+            ))}
+          </div>
+          <div style={{textAlign:"center",marginBottom:16}}>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:36,color:goalColor}}>Série {currentSet}/{totalSets}</div>
+            <div style={{fontSize:13,color:C.muted,marginTop:4}}>Objectif : {repsLabel} répétitions</div>
+          </div>
+          {/* Timer */}
+          <div style={{background:C.card2,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}>
+            <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Temps de série</div>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:42,color:C.text}}>{fmt(elapsed)}</div>
+          </div>
+          <div style={{background:goalColor+"12",border:`1px solid ${goalColor}33`,borderRadius:12,padding:12,marginBottom:16}}>
+            <div style={{fontSize:12,color:goalColor,lineHeight:1.6}}>💡 {exercise.conseil}</div>
+          </div>
+        </>}
+
+        {/* Phase: REST */}
+        {phase==="rest"&&<>
+          <div style={{textAlign:"center",marginBottom:16}}>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:28,color:C.blue,marginBottom:4}}>😤 Repos mérité !</div>
+            <div style={{fontSize:13,color:C.muted}}>Série {currentSet}/{totalSets} terminée · Prochain : Série {currentSet+1}</div>
+          </div>
+          <div style={{display:"flex",justifyContent:"center",marginBottom:16}}>
+            <ProgressRing value={restLeft} max={restTime} size={140} stroke={10} color={restLeft>restTime*0.5?C.teal:restLeft>restTime*0.25?C.orange:C.red}>
+              <div style={{fontFamily:F.t,fontWeight:800,fontSize:36,color:C.text}}>{fmt(restLeft)}</div>
+              <div style={{fontSize:12,color:C.muted}}>restant</div>
+            </ProgressRing>
+          </div>
+          <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:12,marginBottom:16,fontSize:12,color:C.muted,textAlign:"center"}}>
+            Prépare-toi pour la série {currentSet+1} · {repsLabel} répétitions
+          </div>
+        </>}
+
+        {/* Phase: DONE */}
+        {phase==="done"&&<>
+          <div style={{textAlign:"center",marginBottom:20}}>
+            <div style={{fontSize:56,marginBottom:8}}>✅</div>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:30,color:goalColor}}>Exercice terminé !</div>
+            <div style={{fontSize:13,color:C.muted,marginTop:6}}>{totalSets} séries complétées · Excellent travail !</div>
+          </div>
+          <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:14,marginBottom:16}}>
+            <div style={{fontSize:12,color:C.muted,textAlign:"center"}}>
+              {isLast ? "🏆 C'est le dernier exercice de ta séance !" : `Prochain : ${""}`}
+            </div>
+          </div>
+        </>}
+      </div>
+
+      {/* Bottom action buttons */}
+      <div style={{padding:"12px 16px 24px",flexShrink:0,borderTop:`1px solid ${C.border}`,display:"flex",gap:10,background:C.bg}}>
+        {phase==="intro"&&bt("▶ Démarrer la série",goalColor,"#050910",handleStart,true)}
+        {phase==="active"&&bt("✓ Fin de série",goalColor,"#050910",handleSetDone,true)}
+        {phase==="rest"&&<>
+          <button onClick={handleSkip} style={{flex:1,padding:"14px 0",borderRadius:12,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontFamily:F.t,fontWeight:700,fontSize:16,cursor:"pointer"}}>Passer ›</button>
+          <div style={{flex:2,background:C.blueDim,border:`1px solid ${C.blue}44`,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:F.t,fontWeight:700,fontSize:16,color:C.blue}}>⏳ Repos en cours</div>
+        </>}
+        {phase==="done"&&<>
+          {!isLast&&bt("Exercice suivant →",goalColor,"#050910",onNext,true)}
+          {isLast&&bt("🏆 Terminer la séance",C.accent,"#050910",onClose,true)}
+        </>}
+      </div>
+    </div>
+  );
 }
 
 /* ═══════════════════════════════════════════
@@ -781,8 +1162,8 @@ function Onboarding({ onDone }) {
     onDone(profile);
   };
   const canNext = () => {
-    if(step===1) return p.name.trim().length>0;
-    if(step===2) return p.weight&&p.height&&p.age;
+    if(step===1) return p.name.trim().length>0 && parseInt(p.age)>=5 && parseInt(p.age)<=100;
+    if(step===2) return parseFloat(p.weight)>0 && parseFloat(p.height)>0;
     return true;
   };
 
@@ -815,7 +1196,9 @@ function Onboarding({ onDone }) {
       </div>
       <div style={{marginBottom:16}}>
         <div style={{fontSize:12,color:C.muted,marginBottom:6,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>Âge</div>
-        <input style={inputStyle} type="number" placeholder="25" value={p.age} onChange={e=>up("age",e.target.value)}/>
+        <input style={inputStyle} type="number" placeholder="25" min="5" max="100" value={p.age}
+          onChange={e=>{const v=parseInt(e.target.value);if(e.target.value===""||(!isNaN(v)&&v>=5&&v<=100))up("age",e.target.value==""?"":String(Math.max(5,Math.min(100,v))))}}/>
+        {p.age&&(parseInt(p.age)<5||parseInt(p.age)>100)&&<div style={{fontSize:11,color:C.red,marginTop:4}}>⚠️ Âge invalide (5–100 ans)</div>}
       </div>
       <div>
         <div style={{fontSize:12,color:C.muted,marginBottom:8,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>Genre</div>
@@ -1069,108 +1452,150 @@ function getLevelSets(level,base){
 function WorkoutTab({profile,workoutLog,setWorkoutLog,starterMode,setStarterMode}){
   const [env,setEnv]=useState(profile.equipment==="salle"?"salle":"maison");
   const [selGoal,setSelGoal]=useState(profile.goal||"masse");
-  const [expanded,setExpanded]=useState(null);
   const [showTimer,setShowTimer]=useState(false);
-  const [rating,setRating]=useState(null);
+  const [activeExIdx,setActiveExIdx]=useState(null); // index exercice ouvert dans le modal
+  const [completedEx,setCompletedEx]=useState(new Set()); // exercices terminés cette session
   const todayKey=new Date().toISOString().split("T")[0];const done=workoutLog[todayKey]?.done;
   const goalData=WORKOUTS.find(w=>w.id===selGoal)||WORKOUTS[0];
   const allExercises=goalData[env];
-  // Mode Découverte : 3 exercices max, 2 séries seulement
   const exercises = starterMode ? allExercises.slice(0,3) : allExercises;
-  const getStarter = (base) => `2×12–15 (repos 90s)`;
   const lastRating=Object.values(workoutLog).slice(-3).find(x=>x.rating)?.rating;
-  const markDone=(r)=>{
-    const upd={...workoutLog,[todayKey]:{done:true,goal:selGoal,env,rating:r||"moyen"}};
-    setWorkoutLog(upd);try{localStorage.setItem("fitapp_wlog",JSON.stringify(upd));}catch{}
-    sendNotif("Séance terminée 🎉","Top boulot ! Continue comme ça.");
-    setRating(null);
+
+  const openEx = idx => { setActiveExIdx(idx); };
+  const closeEx = () => { setActiveExIdx(null); };
+  const nextEx = () => {
+    const next = activeExIdx + 1;
+    setCompletedEx(s=>new Set([...s,activeExIdx]));
+    if(next < exercises.length) setActiveExIdx(next);
+    else { setActiveExIdx(null); }
   };
+  const markDoneFromModal = () => {
+    setCompletedEx(s=>new Set([...s,activeExIdx]));
+    setActiveExIdx(null);
+    // Si tous les exercices sont faits → log séance
+    if(completedEx.size + 1 >= exercises.length) {
+      const upd={...workoutLog,[todayKey]:{done:true,goal:selGoal,env,rating:"moyen"}};
+      setWorkoutLog(upd);try{localStorage.setItem("fitapp_wlog",JSON.stringify(upd));}catch{}
+      sendNotif("Séance terminée 🎉","Tous les exercices complétés — top boulot ! 💪");
+    }
+  };
+
+  const markAllDone = () => {
+    const upd={...workoutLog,[todayKey]:{done:true,goal:selGoal,env,rating:"moyen"}};
+    setWorkoutLog(upd);try{localStorage.setItem("fitapp_wlog",JSON.stringify(upd));}catch{}
+    sendNotif("Séance terminée 🎉","Excellent travail aujourd'hui ! 🔥");
+  };
+
   return (
     <div style={{padding:"16px 16px 100px"}}>
       {showTimer&&<RestTimer onClose={()=>setShowTimer(false)}/>}
+
+      {/* ExerciseModal */}
+      {activeExIdx!==null&&<ExerciseModal
+        exercise={exercises[activeExIdx]}
+        exerciseIndex={activeExIdx}
+        totalExercises={exercises.length}
+        level={profile.level}
+        starterMode={starterMode}
+        goalColor={goalData.color}
+        onClose={()=>{ setCompletedEx(s=>new Set([...s,activeExIdx])); closeEx(); }}
+        onNext={nextEx}
+        isLast={activeExIdx===exercises.length-1}
+      />}
+
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
         <div style={{fontFamily:F.t,fontWeight:800,fontSize:28,marginTop:20}}>Ma Séance</div>
         <button onClick={()=>setShowTimer(true)} style={{marginTop:20,padding:"8px 14px",borderRadius:10,border:`1px solid ${C.teal}44`,background:C.teal+"11",color:C.teal,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>⏱ Repos</button>
       </div>
 
-      {/* ── Mode Découverte toggle ── */}
+      {/* Mode Découverte */}
       <div style={{background:starterMode?C.teal+"15":C.card,border:`1.5px solid ${starterMode?C.teal+"66":C.border}`,borderRadius:14,padding:"12px 14px",marginBottom:10,display:"flex",alignItems:"center",justifyContent:"space-between",transition:"all 0.3s"}}>
         <div>
-          <div style={{fontFamily:F.t,fontWeight:700,fontSize:16,color:starterMode?C.teal:C.text}}>{starterMode?"🌱 Mode Découverte actif":"⚡ Mode Standard"}</div>
-          <div style={{fontSize:11,color:C.muted,marginTop:2}}>{starterMode?"3 exercices · 2 séries · ~15 min · Parfait pour débuter":"Programme complet selon ton niveau"}</div>
+          <div style={{fontFamily:F.t,fontWeight:700,fontSize:15,color:starterMode?C.teal:C.text}}>{starterMode?"🌱 Mode Découverte":"⚡ Mode Standard"}</div>
+          <div style={{fontSize:11,color:C.muted,marginTop:2}}>{starterMode?"3 exercices · ~15 min · Parfait pour débuter":"Programme complet selon ton niveau"}</div>
         </div>
-        <button onClick={()=>setStarterMode(!starterMode)} style={{padding:"8px 14px",borderRadius:10,border:`1px solid ${starterMode?C.teal:C.border}`,background:starterMode?C.teal:"transparent",color:starterMode?"#050910":C.muted,fontFamily:F.t,fontWeight:700,fontSize:13,cursor:"pointer",flexShrink:0,transition:"all 0.2s"}}>{starterMode?"Désactiver":"Activer"}</button>
+        <button onClick={()=>setStarterMode(!starterMode)} style={{padding:"7px 12px",borderRadius:10,border:`1px solid ${starterMode?C.teal:C.border}`,background:starterMode?C.teal:"transparent",color:starterMode?"#050910":C.muted,fontFamily:F.t,fontWeight:700,fontSize:13,cursor:"pointer",flexShrink:0}}>{starterMode?"Désact.":"Activer"}</button>
       </div>
 
-      {starterMode&&<div style={{background:C.teal+"10",border:`1px solid ${C.teal}33`,borderRadius:12,padding:"10px 14px",marginBottom:10,fontSize:12,color:C.teal,lineHeight:1.6}}>
-        ✅ Commence par ces 3 exercices fondamentaux. Quand tu les maîtrises, passe en Mode Standard pour la séance complète !
-      </div>}
-
-      {/* Adapt feedback */}
-      {!starterMode&&lastRating&&<div style={{background:C.card2,border:`1px solid ${C.border}`,borderRadius:12,padding:"10px 14px",marginBottom:10,fontSize:12,color:C.muted}}>
-        {lastRating==="facile"?"💪 Dernière séance facile — on monte le volume cette fois !"
-        :lastRating==="difficile"?"🎯 Dernière séance dure — même plan, on garde ce rythme"
-        :"✅ Bonne progression — continue comme ça !"}
-      </div>}
-      {/* Env toggle */}
+      {/* Env + Goal */}
       <div style={{background:C.card,borderRadius:14,padding:4,display:"flex",marginBottom:10,border:`1px solid ${C.border}`}}>
         {[{id:"maison",label:"🏠 Maison"},{id:"salle",label:"🏋️ Salle"}].map(({id,label})=>(
-          <button key={id} onClick={()=>{setEnv(id);setExpanded(null);}} style={{flex:1,padding:"10px 0",borderRadius:10,border:"none",background:env===id?C.accent:"transparent",color:env===id?"#080B14":C.muted,fontFamily:F.t,fontWeight:700,fontSize:15,cursor:"pointer",transition:"all 0.2s"}}>{label}</button>
+          <button key={id} onClick={()=>{setEnv(id);setCompletedEx(new Set());}} style={{flex:1,padding:"10px 0",borderRadius:10,border:"none",background:env===id?C.accent:"transparent",color:env===id?"#080B14":C.muted,fontFamily:F.t,fontWeight:700,fontSize:15,cursor:"pointer"}}>{label}</button>
         ))}
       </div>
-      {/* Goal selector */}
       <div style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:6,scrollbarWidth:"none",marginBottom:10}}>
-        {WORKOUTS.map(w=>(
-          <button key={w.id} onClick={()=>{setSelGoal(w.id);setExpanded(null);}} style={{flexShrink:0,padding:"7px 12px",borderRadius:12,border:`1px solid ${selGoal===w.id?w.color:C.border}`,background:selGoal===w.id?w.color+"22":C.card,color:selGoal===w.id?w.color:C.muted,fontFamily:F.b,fontWeight:600,fontSize:12,cursor:"pointer",whiteSpace:"nowrap"}}>{w.emoji} {w.label}</button>
-        ))}
+        {WORKOUTS.map(w=>(<button key={w.id} onClick={()=>{setSelGoal(w.id);setCompletedEx(new Set());}} style={{flexShrink:0,padding:"7px 12px",borderRadius:12,border:`1px solid ${selGoal===w.id?w.color:C.border}`,background:selGoal===w.id?w.color+"22":C.card,color:selGoal===w.id?w.color:C.muted,fontFamily:F.b,fontWeight:600,fontSize:12,cursor:"pointer",whiteSpace:"nowrap"}}>{w.emoji} {w.label}</button>))}
       </div>
-      {/* Science banner */}
-      <div style={{background:goalData.colorDim,border:`1px solid ${goalData.color}33`,borderRadius:12,padding:"10px 14px",marginBottom:10,fontSize:11,color:goalData.color}}>
-        🔬 {goalData.science}
-      </div>
-      {/* Header */}
-      <div style={{background:`linear-gradient(135deg,${goalData.colorDim},${C.card})`,border:`1px solid ${goalData.color}44`,borderRadius:16,padding:"14px 16px",marginBottom:10}}>
+
+      {/* Header séance */}
+      <div style={{background:`linear-gradient(135deg,${goalData.colorDim},${C.card})`,border:`1px solid ${goalData.color}44`,borderRadius:16,padding:"12px 16px",marginBottom:10}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div><div style={{fontFamily:F.t,fontWeight:800,fontSize:24,color:goalData.color}}>{goalData.emoji} {goalData.label}</div><div style={{fontSize:12,color:C.muted}}>{exercises.length} exercices · ~{goalData.tempsEst} min · {profile.level==="debutant"?"Adapté débutant":profile.level==="avance"?"Version avancée":"Intermédiaire"}</div></div>
-          {done&&<Pill text="✅ FAIT" color={C.accent}/>}
+          <div>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:22,color:goalData.color}}>{goalData.emoji} {goalData.label}</div>
+            <div style={{fontSize:11,color:C.muted}}>{exercises.length} exercices · ~{goalData.tempsEst} min</div>
+          </div>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontFamily:F.t,fontWeight:800,fontSize:20,color:completedEx.size===exercises.length&&exercises.length>0?C.accent:C.muted}}>{completedEx.size}/{exercises.length}</div>
+            <div style={{fontSize:10,color:C.muted}}>terminés</div>
+          </div>
+        </div>
+        {/* Progress bar */}
+        <div style={{height:4,background:C.border,borderRadius:2,marginTop:8}}>
+          <div style={{height:"100%",width:`${exercises.length>0?(completedEx.size/exercises.length)*100:0}%`,background:goalData.color,borderRadius:2,transition:"width 0.5s"}}/>
         </div>
       </div>
-      {/* Equipment summary (salle) */}
-      {env==="salle"&&<div style={{background:C.blueDim,border:`1px solid ${C.blue}33`,borderRadius:12,padding:"10px 14px",marginBottom:10,fontSize:12,color:C.blue}}>🏋️ {[...new Set(exercises.flatMap(e=>e.equipement||[]))].join(" · ")||"Voir chaque exercice"}</div>}
-      {/* Exercises */}
-      {exercises.map((ex,i)=>(
-        <div key={i} onClick={()=>setExpanded(expanded===i?null:i)} style={{background:C.card,borderRadius:16,border:`1px solid ${expanded===i?goalData.color+"66":C.border}`,padding:14,marginBottom:8,cursor:"pointer",transition:"border-color 0.2s"}}>
-          <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-            <div style={{background:goalData.color+"15",borderRadius:12,padding:"4px 2px",flexShrink:0}}><StickFigure type={getFigType(ex.nom)} color={goalData.color} size={58}/></div>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:4}}><div style={{fontWeight:700,fontSize:14,lineHeight:1.3}}>{ex.nom}</div><div style={{transform:expanded===i?"rotate(180deg)":"none",transition:"transform 0.3s",color:goalData.color,fontSize:11,flexShrink:0}}>▼</div></div>
-              <div style={{fontSize:12,color:goalData.color,fontFamily:F.t,fontWeight:700,marginTop:4}}>{starterMode?getStarter(ex.setsBase):getLevelSets(profile.level,ex.setsBase)}</div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:4}}>
-                <Pill text={ex.muscle} color={C.muted} small/>
-                {ex.equipement&&ex.equipement.map((eq,j)=><Pill key={j} text={eq} color={C.blue} small/>)}
+
+      {/* Science tip */}
+      <div style={{background:goalData.colorDim,border:`1px solid ${goalData.color}22`,borderRadius:10,padding:"8px 12px",marginBottom:12,fontSize:11,color:goalData.color}}>🔬 {goalData.science}</div>
+
+      {/* Exercise cards — cliquable → ouvre le modal */}
+      {exercises.map((ex,i)=>{
+        const isDone = completedEx.has(i);
+        return (
+          <div key={i} onClick={()=>openEx(i)} style={{
+            background:isDone?goalData.colorDim:C.card,
+            borderRadius:16,border:`1.5px solid ${isDone?goalData.color+"66":C.border}`,
+            padding:14,marginBottom:8,cursor:"pointer",
+            opacity:isDone?0.85:1,transition:"all 0.2s",
+          }}>
+            <div style={{display:"flex",gap:10,alignItems:"center"}}>
+              <div style={{background:goalData.color+(isDone?"30":"15"),borderRadius:12,padding:"4px 2px",flexShrink:0,position:"relative"}}>
+                <StickFigure type={getFigType(ex.nom)} color={isDone?goalData.color:goalData.color} size={60}/>
+                {isDone&&<div style={{position:"absolute",top:-4,right:-4,width:18,height:18,borderRadius:9,background:goalData.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:"#050910",fontWeight:800}}>✓</div>}
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div style={{fontWeight:700,fontSize:14,color:isDone?goalData.color:C.text}}>{ex.nom}</div>
+                  <div style={{color:goalData.color,fontSize:18,flexShrink:0}}>{isDone?"✅":"›"}</div>
+                </div>
+                <div style={{fontSize:11,color:goalData.color,fontFamily:F.t,fontWeight:700,marginTop:3}}>
+                  {starterMode?"2×12–15 · repos 90s":getLevelSets(profile.level,ex.setsBase)}
+                </div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:4}}>
+                  <Pill text={ex.muscle} color={C.muted} small/>
+                  {ex.equipement&&ex.equipement.map((eq,j)=><Pill key={j} text={eq} color={C.blue} small/>)}
+                </div>
               </div>
             </div>
           </div>
-          {expanded===i&&<div style={{marginTop:10}}>
-            <div style={{background:goalData.colorDim,borderRadius:10,padding:"10px 12px",fontSize:12,lineHeight:1.7,borderLeft:`3px solid ${goalData.color}`}}>💡 {ex.conseil}</div>
-            {ex.alternatif&&<div style={{marginTop:6,background:C.accentDim,borderRadius:10,padding:"8px 12px",fontSize:12,lineHeight:1.7,borderLeft:`3px solid ${C.accent}`}}>🏠 <strong style={{color:C.accent}}>Conseil :</strong> {ex.alternatif}</div>}
-          </div>}
-        </div>
-      ))}
-      {/* Complete workout */}
-      <div style={{marginTop:8}}>
-        {done?<div style={{background:C.accent+"18",border:`1px solid ${C.accent}33`,borderRadius:14,padding:"14px",textAlign:"center",color:C.accent,fontFamily:F.t,fontWeight:700,fontSize:16}}>✅ SÉANCE COMPLÉTÉE AUJOURD'HUI !</div>
-        :<div>
-          <div style={{fontSize:12,color:C.muted,textAlign:"center",marginBottom:8}}>Comment était cette séance ?</div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
-            {[["facile","😅","Facile"],["moyen","💪","Bien"],["difficile","🔥","Difficile"]].map(([v,e,l])=>(<button key={v} onClick={()=>markDone(v)} style={{padding:"12px 6px",borderRadius:12,border:`1px solid ${C.border}`,background:C.card,color:C.text,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer",textAlign:"center"}}><div style={{fontSize:22,marginBottom:2}}>{e}</div>{l}</button>))}
-          </div>
-        </div>}
+        );
+      })}
+
+      {/* Marquer séance faite */}
+      <div style={{marginTop:10}}>
+        {done
+          ? <div style={{background:C.accent+"18",border:`1px solid ${C.accent}33`,borderRadius:14,padding:"14px",textAlign:"center",color:C.accent,fontFamily:F.t,fontWeight:700,fontSize:16}}>✅ SÉANCE COMPLÉTÉE AUJOURD'HUI !</div>
+          : <button onClick={markAllDone} style={{width:"100%",background:completedEx.size===exercises.length&&exercises.length>0?C.accent:C.card,color:completedEx.size===exercises.length&&exercises.length>0?"#050910":C.muted,border:`1px solid ${C.border}`,borderRadius:14,padding:14,fontFamily:F.t,fontWeight:800,fontSize:16,cursor:"pointer",transition:"all 0.3s"}}>
+              {completedEx.size===exercises.length&&exercises.length>0?"🏆 VALIDER LA SÉANCE":"Marquer la séance comme terminée"}
+            </button>
+        }
       </div>
     </div>
   );
 }
-
+/* ═══════════════════════════════════════════
+   NUTRITION TAB
+═══════════════════════════════════════════ */
 /* ═══════════════════════════════════════════
    NUTRITION TAB
 ═══════════════════════════════════════════ */
