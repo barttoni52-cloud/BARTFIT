@@ -1,3 +1,5 @@
-git add vercel.json
-git commit -m "feat: add Vercel config"
-git push
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
