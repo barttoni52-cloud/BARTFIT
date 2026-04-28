@@ -486,8 +486,20 @@ const NUTRITION_BASE = [
 ];
 
 /* ═══════════════════════════════════════════
-   UTILITIES
+   PROGRAMME 8 SEMAINES
 ═══════════════════════════════════════════ */
+const PROGRAMME_8S = [
+  { week:1, label:"Fondation", focus:"Apprendre les mouvements", intensity:"60%", volume:"3×12", repos:"90s", conseil:"Maîtrise la technique avant tout. Poids léger, forme parfaite." },
+  { week:2, label:"Consolidation", focus:"Améliorer la technique", intensity:"65%", volume:"3×12", repos:"90s", conseil:"Tu devrais te sentir plus à l'aise. Augmente très légèrement si la forme est bonne." },
+  { week:3, label:"Progression", focus:"Augmenter le volume", intensity:"70%", volume:"4×10", repos:"75s", conseil:"4 séries maintenant. La fatigue est normale — c'est une bonne chose." },
+  { week:4, label:"Déload", focus:"Récupération active", intensity:"50%", volume:"3×10", repos:"90s", conseil:"Semaine de récupération obligatoire. Poids réduit mais maintient la technique." },
+  { week:5, label:"Intensification", focus:"Charger plus lourd", intensity:"75%", volume:"4×8", repos:"75s", conseil:"Monte les charges. Tu dois sentir de la résistance dès la série 3." },
+  { week:6, label:"Force", focus:"Gains de force", intensity:"80%", volume:"4×6", repos:"90s", conseil:"Moins de reps, plus lourd. La récupération entre séries est cruciale." },
+  { week:7, label:"Peak", focus:"Performance maximale", intensity:"85%", volume:"5×5", repos:"120s", conseil:"Semaine intense. Assure-toi de bien dormir et bien manger cette semaine." },
+  { week:8, label:"Test & Bilan", focus:"Mesurer la progression", intensity:"90%", volume:"3×5 max", repos:"120s", conseil:"Teste tes charges max. Compare avec la semaine 1 — la transformation est là !" },
+];
+
+
 function calcTDEE(p) {
   const w=parseFloat(p.weight),h=parseFloat(p.height),a=parseInt(p.age);
   if(!w||!h||!a) return null;
@@ -579,23 +591,296 @@ function getFigType(nom){
 }
 
 function StickFigure({type="generic",color=C.accent,size=64}){
-  const map={
-    pushup:"pushup",squat:"squat",deadlift:"deadlift",bench:"bench",
-    press:"press",row:"row",plank:"plank",lunge:"lunge",
-    hipthrust:"hipthrust",run:"run",stretch:"stretch",curl:"curl",
-    crunch:"crunch",dip:"dip",wallsit:"wallsit",donkeykick:"donkeykick",
-    clamshell:"clamshell",legcurl:"legcurl",goblet:"goblet",
-    legpress:"legpress",abductor:"abductor",generic:"pushup",
+  const f=color, s={fill:f};
+  const bolt = <polygon points="10,2 4,12 9,12 3,22 14,8 9,8" fill={f} opacity="0.2"/>;
+
+  const figs={
+    pushup:(
+      <svg viewBox="0 0 40 30" width={size} height={size*0.75}>
+        {bolt}
+        <circle cx="4" cy="10" r="3.5" {...s}/>
+        <ellipse cx="11" cy="13" rx="5" ry="3" transform="rotate(-10 11 13)" {...s}/>
+        <ellipse cx="22" cy="16" rx="8" ry="3" transform="rotate(-5 22 16)" {...s}/>
+        <ellipse cx="12" cy="19" rx="3" ry="5" transform="rotate(-75 12 19)" {...s}/>
+        <ellipse cx="24" cy="21" rx="3" ry="5" transform="rotate(-75 24 21)" {...s}/>
+        <ellipse cx="33" cy="13" rx="5" ry="3" transform="rotate(15 33 13)" {...s}/>
+        <ellipse cx="36" cy="8" rx="3" ry="5" transform="rotate(15 36 8)" {...s}/>
+      </svg>
+    ),
+    squat:(
+      <svg viewBox="0 0 34 40" width={size*0.85} height={size}>
+        {bolt}
+        <circle cx="17" cy="4" r="4" {...s}/>
+        <ellipse cx="17" cy="11" rx="5" ry="4" {...s}/>
+        <ellipse cx="17" cy="19" rx="7" ry="4" {...s}/>
+        <ellipse cx="9" cy="25" rx="4" ry="7" transform="rotate(-35 9 25)" {...s}/>
+        <ellipse cx="25" cy="25" rx="4" ry="7" transform="rotate(35 25 25)" {...s}/>
+        <ellipse cx="5" cy="33" rx="3" ry="6" transform="rotate(10 5 33)" {...s}/>
+        <ellipse cx="29" cy="33" rx="3" ry="6" transform="rotate(-10 29 33)" {...s}/>
+      </svg>
+    ),
+    deadlift:(
+      <svg viewBox="0 0 40 38" width={size} height={size*0.95}>
+        {bolt}
+        <circle cx="9" cy="5" r="3.5" {...s}/>
+        <ellipse cx="16" cy="11" rx="7" ry="3.5" transform="rotate(25 16 11)" {...s}/>
+        <ellipse cx="23" cy="18" rx="7" ry="3.5" transform="rotate(25 23 18)" {...s}/>
+        <rect x="4" y="26" width="30" height="4" rx="2" {...s}/>
+        <rect x="2" y="23" width="4" height="10" rx="2" {...s}/>
+        <rect x="32" y="23" width="4" height="10" rx="2" {...s}/>
+        <ellipse cx="28" cy="29" rx="3" ry="7" transform="rotate(-5 28 29)" {...s}/>
+        <ellipse cx="32" cy="29" rx="3" ry="7" transform="rotate(5 32 29)" {...s}/>
+      </svg>
+    ),
+    bench:(
+      <svg viewBox="0 0 44 32" width={size} height={size*0.73}>
+        {bolt}
+        <circle cx="5" cy="14" r="3.5" {...s}/>
+        <ellipse cx="16" cy="18" rx="9" ry="3.5" {...s}/>
+        <ellipse cx="12" cy="13" rx="3" ry="7" transform="rotate(5 12 13)" {...s}/>
+        <ellipse cx="22" cy="13" rx="3" ry="7" transform="rotate(-5 22 13)" {...s}/>
+        <rect x="7" y="6" width="22" height="4" rx="2" {...s}/>
+        <rect x="5" y="3" width="3" height="10" rx="1.5" {...s}/>
+        <rect x="27" y="3" width="3" height="10" rx="1.5" {...s}/>
+        <rect x="4" y="21" width="28" height="4" rx="2" {...s}/>
+        <ellipse cx="36" cy="22" rx="3" ry="6" transform="rotate(20 36 22)" {...s}/>
+      </svg>
+    ),
+    press:(
+      <svg viewBox="0 0 38 42" width={size*0.95} height={size}>
+        {bolt}
+        <circle cx="19" cy="10" r="4" {...s}/>
+        <ellipse cx="19" cy="18" rx="5" ry="4" {...s}/>
+        <ellipse cx="19" cy="25" rx="7" ry="4" {...s}/>
+        <ellipse cx="10" cy="17" rx="3" ry="8" transform="rotate(-20 10 17)" {...s}/>
+        <ellipse cx="28" cy="17" rx="3" ry="8" transform="rotate(20 28 17)" {...s}/>
+        <rect x="2" y="3" width="34" height="4" rx="2" {...s}/>
+        <rect x="0" y="1" width="3" height="8" rx="1.5" {...s}/>
+        <rect x="35" y="1" width="3" height="8" rx="1.5" {...s}/>
+        <ellipse cx="13" cy="33" rx="3" ry="7" transform="rotate(-5 13 33)" {...s}/>
+        <ellipse cx="25" cy="33" rx="3" ry="7" transform="rotate(5 25 33)" {...s}/>
+      </svg>
+    ),
+    row:(
+      <svg viewBox="0 0 42 34" width={size} height={size*0.81}>
+        {bolt}
+        <circle cx="7" cy="6" r="3.5" {...s}/>
+        <ellipse cx="16" cy="12" rx="7" ry="3.5" transform="rotate(20 16 12)" {...s}/>
+        <ellipse cx="25" cy="18" rx="7" ry="3.5" transform="rotate(20 25 18)" {...s}/>
+        <ellipse cx="18" cy="9" rx="3" ry="7" transform="rotate(-50 18 9)" {...s}/>
+        <ellipse cx="26" cy="6" rx="4" ry="4" {...s}/>
+        <ellipse cx="33" cy="6" rx="4" ry="4" {...s}/>
+        <ellipse cx="30" cy="23" rx="3" ry="8" transform="rotate(-10 30 23)" {...s}/>
+        <ellipse cx="34" cy="23" rx="3" ry="8" transform="rotate(10 34 23)" {...s}/>
+      </svg>
+    ),
+    plank:(
+      <svg viewBox="0 0 46 22" width={size} height={size*0.48}>
+        {bolt}
+        <circle cx="4" cy="8" r="3.5" {...s}/>
+        <ellipse cx="13" cy="11" rx="7" ry="3" transform="rotate(-3 13 11)" {...s}/>
+        <ellipse cx="27" cy="13" rx="11" ry="3" transform="rotate(-3 27 13)" {...s}/>
+        <ellipse cx="16" cy="15" rx="2.5" ry="6" transform="rotate(85 16 15)" {...s}/>
+        <ellipse cx="30" cy="17" rx="2.5" ry="6" transform="rotate(85 30 17)" {...s}/>
+        <ellipse cx="39" cy="10" rx="3" ry="7" transform="rotate(-15 39 10)" {...s}/>
+        <ellipse cx="43" cy="5" rx="2.5" ry="4" transform="rotate(-15 43 5)" {...s}/>
+      </svg>
+    ),
+    lunge:(
+      <svg viewBox="0 0 38 42" width={size*0.95} height={size}>
+        {bolt}
+        <circle cx="19" cy="4" r="4" {...s}/>
+        <ellipse cx="19" cy="12" rx="5" ry="4" {...s}/>
+        <ellipse cx="19" cy="20" rx="7" ry="4" {...s}/>
+        <ellipse cx="25" cy="27" rx="4" ry="8" transform="rotate(10 25 27)" {...s}/>
+        <ellipse cx="27" cy="37" rx="3.5" ry="5" {...s}/>
+        <ellipse cx="11" cy="27" rx="4" ry="8" transform="rotate(-15 11 27)" {...s}/>
+        <ellipse cx="8" cy="37" rx="3.5" ry="4" transform="rotate(10 8 37)" {...s}/>
+      </svg>
+    ),
+    hipthrust:(
+      <svg viewBox="0 0 42 30" width={size} height={size*0.71}>
+        {bolt}
+        <rect x="0" y="8" width="5" height="18" rx="2.5" {...s}/>
+        <circle cx="9" cy="10" r="3.5" {...s}/>
+        <ellipse cx="16" cy="14" rx="6" ry="3.5" {...s}/>
+        <ellipse cx="24" cy="12" rx="6" ry="3.5" transform="rotate(-10 24 12)" {...s}/>
+        <ellipse cx="31" cy="18" rx="4" ry="7" transform="rotate(20 31 18)" {...s}/>
+        <ellipse cx="34" cy="26" rx="5" ry="3" {...s}/>
+      </svg>
+    ),
+    run:(
+      <svg viewBox="0 0 34 42" width={size*0.81} height={size}>
+        {bolt}
+        <circle cx="22" cy="4" r="4" {...s}/>
+        <ellipse cx="20" cy="13" rx="5" ry="4" transform="rotate(-5 20 13)" {...s}/>
+        <ellipse cx="18" cy="21" rx="6" ry="4" transform="rotate(-5 18 21)" {...s}/>
+        <ellipse cx="11" cy="15" rx="3" ry="7" transform="rotate(-30 11 15)" {...s}/>
+        <ellipse cx="6" cy="10" rx="3" ry="5" transform="rotate(-20 6 10)" {...s}/>
+        <ellipse cx="27" cy="14" rx="3" ry="6" transform="rotate(25 27 14)" {...s}/>
+        <ellipse cx="30" cy="9" rx="3" ry="5" transform="rotate(15 30 9)" {...s}/>
+        <ellipse cx="22" cy="29" rx="4" ry="8" transform="rotate(15 22 29)" {...s}/>
+        <ellipse cx="26" cy="38" rx="5" ry="3" transform="rotate(-10 26 38)" {...s}/>
+        <ellipse cx="13" cy="30" rx="4" ry="8" transform="rotate(-10 13 30)" {...s}/>
+        <ellipse cx="7" cy="38" rx="5" ry="3" transform="rotate(5 7 38)" {...s}/>
+      </svg>
+    ),
+    stretch:(
+      <svg viewBox="0 0 44 26" width={size} height={size*0.59}>
+        {bolt}
+        <circle cx="5" cy="8" r="3.5" {...s}/>
+        <ellipse cx="13" cy="13" rx="7" ry="3.5" transform="rotate(20 13 13)" {...s}/>
+        <ellipse cx="24" cy="18" rx="9" ry="3.5" transform="rotate(5 24 18)" {...s}/>
+        <ellipse cx="36" cy="20" rx="7" ry="3" {...s}/>
+        <ellipse cx="38" cy="22" rx="6" ry="2.5" transform="rotate(5 38 22)" {...s}/>
+        <ellipse cx="11" cy="16" rx="3" ry="7" transform="rotate(80 11 16)" {...s}/>
+        <ellipse cx="21" cy="19" rx="3" ry="7" transform="rotate(75 21 19)" {...s}/>
+      </svg>
+    ),
+    curl:(
+      <svg viewBox="0 0 30 42" width={size*0.71} height={size}>
+        {bolt}
+        <circle cx="15" cy="4" r="4" {...s}/>
+        <ellipse cx="15" cy="12" rx="5" ry="4" {...s}/>
+        <ellipse cx="15" cy="20" rx="6" ry="4" {...s}/>
+        <ellipse cx="7" cy="18" rx="3" ry="7" transform="rotate(-5 7 18)" {...s}/>
+        <ellipse cx="5" cy="26" rx="3" ry="5" transform="rotate(5 5 26)" {...s}/>
+        <ellipse cx="23" cy="14" rx="3" ry="7" transform="rotate(30 23 14)" {...s}/>
+        <ellipse cx="24" cy="8" rx="4.5" ry="4" {...s}/>
+        <ellipse cx="12" cy="30" rx="3" ry="7" transform="rotate(-5 12 30)" {...s}/>
+        <ellipse cx="18" cy="30" rx="3" ry="7" transform="rotate(5 18 30)" {...s}/>
+      </svg>
+    ),
+    crunch:(
+      <svg viewBox="0 0 42 26" width={size} height={size*0.62}>
+        {bolt}
+        <circle cx="6" cy="7" r="3.5" {...s}/>
+        <ellipse cx="14" cy="12" rx="7" ry="3.5" {...s}/>
+        <ellipse cx="7" cy="5" rx="3" ry="5" transform="rotate(-30 7 5)" {...s}/>
+        <ellipse cx="14" cy="4" rx="3" ry="5" transform="rotate(20 14 4)" {...s}/>
+        <ellipse cx="25" cy="16" rx="8" ry="3.5" {...s}/>
+        <ellipse cx="33" cy="14" rx="4" ry="7" transform="rotate(-20 33 14)" {...s}/>
+        <ellipse cx="36" cy="21" rx="4" ry="5" transform="rotate(5 36 21)" {...s}/>
+        <ellipse cx="28" cy="21" rx="4" ry="5" transform="rotate(-5 28 21)" {...s}/>
+      </svg>
+    ),
+    dip:(
+      <svg viewBox="0 0 42 40" width={size} height={size*0.95}>
+        {bolt}
+        <rect x="0" y="10" width="14" height="4" rx="2" {...s}/>
+        <rect x="28" y="10" width="14" height="4" rx="2" {...s}/>
+        <circle cx="21" cy="4" r="4" {...s}/>
+        <ellipse cx="21" cy="12" rx="5" ry="4" {...s}/>
+        <ellipse cx="21" cy="20" rx="6" ry="4" {...s}/>
+        <ellipse cx="11" cy="16" rx="3" ry="7" transform="rotate(-20 11 16)" {...s}/>
+        <ellipse cx="31" cy="16" rx="3" ry="7" transform="rotate(20 31 16)" {...s}/>
+        <ellipse cx="15" cy="29" rx="3" ry="8" transform="rotate(-5 15 29)" {...s}/>
+        <ellipse cx="27" cy="29" rx="3" ry="8" transform="rotate(5 27 29)" {...s}/>
+      </svg>
+    ),
+    wallsit:(
+      <svg viewBox="0 0 34 40" width={size*0.85} height={size}>
+        {bolt}
+        <rect x="0" y="0" width="5" height="40" rx="2.5" {...s} opacity="0.5"/>
+        <circle cx="13" cy="5" r="4" {...s}/>
+        <ellipse cx="13" cy="13" rx="4" ry="5" {...s}/>
+        <ellipse cx="13" cy="21" rx="5" ry="4" {...s}/>
+        <ellipse cx="22" cy="23" rx="9" ry="3.5" {...s}/>
+        <ellipse cx="30" cy="31" rx="3.5" ry="9" transform="rotate(5 30 31)" {...s}/>
+        <ellipse cx="13" cy="26" rx="5" ry="3" {...s}/>
+        <ellipse cx="11" cy="32" rx="4" ry="3" {...s}/>
+      </svg>
+    ),
+    donkeykick:(
+      <svg viewBox="0 0 44 34" width={size} height={size*0.77}>
+        {bolt}
+        <circle cx="6" cy="16" r="3.5" {...s}/>
+        <ellipse cx="14" cy="20" rx="7" ry="3.5" {...s}/>
+        <ellipse cx="10" cy="26" rx="2.5" ry="6" transform="rotate(80 10 26)" {...s}/>
+        <ellipse cx="22" cy="26" rx="2.5" ry="6" transform="rotate(85 22 26)" {...s}/>
+        <ellipse cx="28" cy="20" rx="3" ry="6" transform="rotate(-60 28 20)" {...s}/>
+        <ellipse cx="35" cy="13" rx="3" ry="6" transform="rotate(-70 35 13)" {...s}/>
+        <ellipse cx="40" cy="6" rx="3" ry="5" transform="rotate(-80 40 6)" {...s}/>
+      </svg>
+    ),
+    clamshell:(
+      <svg viewBox="0 0 42 28" width={size} height={size*0.67}>
+        {bolt}
+        <circle cx="5" cy="14" r="3.5" {...s}/>
+        <ellipse cx="5" cy="11" rx="2.5" ry="5" transform="rotate(-30 5 11)" {...s}/>
+        <ellipse cx="16" cy="17" rx="9" ry="3.5" {...s}/>
+        <ellipse cx="28" cy="13" rx="7" ry="3.5" transform="rotate(-25 28 13)" {...s}/>
+        <ellipse cx="34" cy="8" rx="3" ry="6" transform="rotate(-35 34 8)" {...s}/>
+        <ellipse cx="28" cy="20" rx="7" ry="3.5" {...s}/>
+        <ellipse cx="35" cy="22" rx="3" ry="5" transform="rotate(10 35 22)" {...s}/>
+      </svg>
+    ),
+    legcurl:(
+      <svg viewBox="0 0 44 22" width={size} height={size*0.5}>
+        {bolt}
+        <circle cx="5" cy="10" r="3.5" {...s}/>
+        <ellipse cx="15" cy="13" rx="9" ry="3.5" {...s}/>
+        <ellipse cx="8" cy="15" rx="2.5" ry="5" transform="rotate(85 8 15)" {...s}/>
+        <ellipse cx="28" cy="14" rx="8" ry="3.5" {...s}/>
+        <ellipse cx="36" cy="12" rx="4" ry="7" transform="rotate(-30 36 12)" {...s}/>
+        <ellipse cx="41" cy="5" rx="3.5" ry="5" transform="rotate(-60 41 5)" {...s}/>
+      </svg>
+    ),
+    goblet:(
+      <svg viewBox="0 0 38 42" width={size*0.95} height={size}>
+        {bolt}
+        <circle cx="19" cy="4" r="4" {...s}/>
+        <ellipse cx="19" cy="12" rx="5" ry="4" {...s}/>
+        <ellipse cx="19" cy="19" rx="8" ry="6" {...s}/>
+        <circle cx="19" cy="14" r="4.5" fill={color} opacity="0.6"/>
+        <ellipse cx="9" cy="27" rx="4" ry="8" transform="rotate(-35 9 27)" {...s}/>
+        <ellipse cx="29" cy="27" rx="4" ry="8" transform="rotate(35 29 27)" {...s}/>
+        <ellipse cx="5" cy="36" rx="3" ry="6" transform="rotate(10 5 36)" {...s}/>
+        <ellipse cx="33" cy="36" rx="3" ry="6" transform="rotate(-10 33 36)" {...s}/>
+      </svg>
+    ),
+    legpress:(
+      <svg viewBox="0 0 44 34" width={size} height={size*0.77}>
+        {bolt}
+        <rect x="0" y="18" width="18" height="14" rx="3" {...s} opacity="0.4"/>
+        <circle cx="5" cy="14" r="3.5" {...s}/>
+        <ellipse cx="14" cy="20" rx="8" ry="3.5" {...s}/>
+        <ellipse cx="10" cy="13" rx="2.5" ry="5" transform="rotate(10 10 13)" {...s}/>
+        <ellipse cx="26" cy="16" rx="8" ry="3.5" transform="rotate(-20 26 16)" {...s}/>
+        <ellipse cx="33" cy="10" rx="4" ry="7" transform="rotate(-30 33 10)" {...s}/>
+        <rect x="38" y="2" width="5" height="18" rx="2.5" {...s}/>
+      </svg>
+    ),
+    abductor:(
+      <svg viewBox="0 0 44 38" width={size} height={size*0.86}>
+        {bolt}
+        <rect x="10" y="16" width="24" height="5" rx="2.5" {...s}/>
+        <circle cx="22" cy="4" r="4" {...s}/>
+        <ellipse cx="22" cy="12" rx="5" ry="4" {...s}/>
+        <ellipse cx="22" cy="20" rx="6" ry="3" {...s}/>
+        <ellipse cx="8" cy="27" rx="4" ry="8" transform="rotate(-20 8 27)" {...s}/>
+        <ellipse cx="36" cy="27" rx="4" ry="8" transform="rotate(20 36 27)" {...s}/>
+        <ellipse cx="3" cy="34" rx="3" ry="4" transform="rotate(-10 3 34)" {...s}/>
+        <ellipse cx="41" cy="34" rx="3" ry="4" transform="rotate(10 41 34)" {...s}/>
+      </svg>
+    ),
+    generic:(
+      <svg viewBox="0 0 30 42" width={size*0.71} height={size}>
+        {bolt}
+        <circle cx="15" cy="4" r="4" {...s}/>
+        <ellipse cx="15" cy="12" rx="5" ry="4" {...s}/>
+        <ellipse cx="15" cy="20" rx="6" ry="4" {...s}/>
+        <ellipse cx="7" cy="16" rx="3" ry="7" transform="rotate(-10 7 16)" {...s}/>
+        <ellipse cx="23" cy="16" rx="3" ry="7" transform="rotate(10 23 16)" {...s}/>
+        <ellipse cx="11" cy="29" rx="3" ry="8" transform="rotate(-5 11 29)" {...s}/>
+        <ellipse cx="19" cy="29" rx="3" ry="8" transform="rotate(5 19 29)" {...s}/>
+      </svg>
+    ),
   };
-  const file = map[type]||"pushup";
   return (
-    <img
-      src={`/${file}.png`}
-      alt={file}
-      width={size}
-      height={size}
-      style={{display:"block",flexShrink:0,objectFit:"contain",borderRadius:8}}
-    />
+    <div style={{width:size,height:size,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+      {figs[type]||figs.generic}
+    </div>
   );
 }
 /* ═══════════════════════════════════════════
@@ -998,6 +1283,82 @@ function Pill({text,color,bg,small}){return (<span style={{background:bg||color+
 function SectionHeader({title,sub}){return (<div style={{margin:"20px 0 14px"}}><div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1.2,marginBottom:2}}>{sub}</div><div style={{fontFamily:F.t,fontWeight:800,fontSize:26,letterSpacing:0.3}}>{title}</div></div>);}
 
 /* Rest Timer */
+/* ═══════════════════════════════════════════
+   WEIGHT GRAPH — Courbe de poids SVG
+═══════════════════════════════════════════ */
+function WeightGraph({weightLog}){
+  const entries=Object.entries(weightLog).sort((a,b)=>a[0].localeCompare(b[0])).slice(-30);
+  if(entries.length<2)return(<div style={{textAlign:"center",padding:"20px 0",color:C.muted,fontSize:13}}>Ajoute au moins 2 pesées pour voir ton graphe 📈</div>);
+  const vals=entries.map(([,v])=>parseFloat(v));
+  const min=Math.min(...vals)-1,max=Math.max(...vals)+1,W=300,H=80;
+  const x=i=>(i/(entries.length-1))*(W-20)+10;
+  const y=v=>H-((v-min)/(max-min))*(H-10)-5;
+  const path=entries.map(([,v],i)=>`${i===0?"M":"L"}${x(i)},${y(parseFloat(v))}`).join(" ");
+  const first=vals[0],last=vals[vals.length-1],diff=(last-first).toFixed(1);
+  const trend=parseFloat(diff)<0?C.accent:parseFloat(diff)>0?C.red:C.muted;
+  return(
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+        <div style={{fontFamily:F.t,fontWeight:800,fontSize:26,color:C.text}}>{last}kg</div>
+        <div style={{textAlign:"right"}}>
+          <div style={{fontFamily:F.t,fontWeight:700,fontSize:18,color:trend}}>{parseFloat(diff)>0?"+":""}{diff}kg</div>
+          <div style={{fontSize:11,color:C.muted}}>sur {entries.length} mesures</div>
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{display:"block"}}>
+        <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={C.accent} stopOpacity="0.3"/><stop offset="100%" stopColor={C.accent} stopOpacity="0"/></linearGradient></defs>
+        <path d={path+" L"+x(entries.length-1)+","+H+" L10,"+H+" Z"} fill="url(#wg)"/>
+        <path d={path} fill="none" stroke={C.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {entries.map(([,v],i)=>(<circle key={i} cx={x(i)} cy={y(parseFloat(v))} r="3" fill={C.accent}/>))}
+      </svg>
+      <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+        <div style={{fontSize:10,color:C.muted}}>{entries[0][0].slice(5)}</div>
+        <div style={{fontSize:10,color:C.muted}}>{entries[entries.length-1][0].slice(5)}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   SESSION CALENDAR — Historique mensuel
+═══════════════════════════════════════════ */
+function SessionCalendar({workoutLog}){
+  const today=new Date(),year=today.getFullYear(),month=today.getMonth();
+  const daysInMonth=new Date(year,month+1,0).getDate(),firstDay=new Date(year,month,1).getDay();
+  const moisNoms=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+  const jours=["D","L","M","M","J","V","S"];
+  const gc={masse:C.accent,seche:C.red,cuisses:C.pink,fullbody:C.blue,cardio:C.orange,stretching:C.teal};
+  return(
+    <div>
+      <div style={{fontFamily:F.t,fontWeight:800,fontSize:18,marginBottom:10}}>{moisNoms[month]} {year}</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:4}}>
+        {jours.map(j=>(<div key={j} style={{textAlign:"center",fontSize:9,color:C.muted,fontWeight:700,padding:"2px 0"}}>{j}</div>))}
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3}}>
+        {Array.from({length:firstDay}).map((_,i)=><div key={"e"+i}/>)}
+        {Array.from({length:daysInMonth}).map((_,i)=>{
+          const day=i+1,key=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+          const log=workoutLog[key],isToday=day===today.getDate();
+          const color=log?.goal?gc[log.goal]||C.accent:null;
+          return(
+            <div key={day} style={{aspectRatio:"1",borderRadius:6,background:color?color+"33":C.card2,border:`1px solid ${isToday?C.accent:color?color+"44":C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:isToday?700:400,color:color||( isToday?C.accent:C.muted)}}>
+              {day}{log?.done&&<span style={{fontSize:5}}>✓</span>}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{marginTop:8,display:"flex",flexWrap:"wrap",gap:5}}>
+        {Object.entries(gc).map(([id,c])=>{
+          const count=Object.values(workoutLog).filter(x=>x.goal===id&&x.done).length;
+          const w=WORKOUTS.find(x=>x.id===id);
+          if(!count)return null;
+          return <div key={id} style={{background:c+"18",border:`1px solid ${c}44`,borderRadius:6,padding:"2px 8px",fontSize:10,color:c,fontWeight:700}}>{w?.emoji} {count}x</div>;
+        })}
+      </div>
+    </div>
+  );
+}
+
 function RestTimer({onClose}){
   const opts=[30,60,90,120,180];
   const [sel,setSel]=useState(90);const [left,setLeft]=useState(90);const [running,setRunning]=useState(false);const ref=useRef(null);
@@ -1122,72 +1483,111 @@ function getLevelSets(level,base){
 /* ═══════════════════════════════════════════
    WORKOUT TAB
 ═══════════════════════════════════════════ */
-function WorkoutTab({profile,workoutLog,setWorkoutLog,starterMode,setStarterMode}){
+function WorkoutTab({profile,workoutLog,setWorkoutLog,starterMode,setStarterMode,weightLog,setWeightLog}){
   const [env,setEnv]=useState(profile.equipment==="salle"?"salle":"maison");
   const [selGoal,setSelGoal]=useState(profile.goal||"masse");
   const [showTimer,setShowTimer]=useState(false);
-  const [activeExIdx,setActiveExIdx]=useState(null); // index exercice ouvert dans le modal
-  const [completedEx,setCompletedEx]=useState(new Set()); // exercices terminés cette session
-  const todayKey=new Date().toISOString().split("T")[0];const done=workoutLog[todayKey]?.done;
+  const [showProgram,setShowProgram]=useState(false);
+  const [activeExIdx,setActiveExIdx]=useState(null);
+  const [completedEx,setCompletedEx]=useState(new Set());
+  const [sessionStart,setSessionStart]=useState(null);
+  const [sessionElapsed,setSessionElapsed]=useState(0);
+  const todayKey=new Date().toISOString().split("T")[0];
+  const done=workoutLog[todayKey]?.done;
   const goalData=WORKOUTS.find(w=>w.id===selGoal)||WORKOUTS[0];
   const allExercises=goalData[env];
-  const exercises = starterMode ? allExercises.slice(0,3) : allExercises;
-  const lastRating=Object.values(workoutLog).slice(-3).find(x=>x.rating)?.rating;
+  const exercises=starterMode?allExercises.slice(0,3):allExercises;
 
-  const openEx = idx => { setActiveExIdx(idx); };
-  const closeEx = () => { setActiveExIdx(null); };
-  const nextEx = () => {
-    const next = activeExIdx + 1;
-    setCompletedEx(s=>new Set([...s,activeExIdx]));
-    if(next < exercises.length) setActiveExIdx(next);
-    else { setActiveExIdx(null); }
-  };
-  const markDoneFromModal = () => {
-    setCompletedEx(s=>new Set([...s,activeExIdx]));
-    setActiveExIdx(null);
-    // Si tous les exercices sont faits → log séance
-    if(completedEx.size + 1 >= exercises.length) {
-      const upd={...workoutLog,[todayKey]:{done:true,goal:selGoal,env,rating:"moyen"}};
-      setWorkoutLog(upd);try{localStorage.setItem("fitapp_wlog",JSON.stringify(upd));}catch{}
-      sendNotif("Séance terminée 🎉","Tous les exercices complétés — top boulot ! 💪");
-    }
-  };
+  // Global session timer
+  useEffect(()=>{
+    if(!sessionStart) return;
+    const iv=setInterval(()=>setSessionElapsed(Math.floor((Date.now()-sessionStart)/1000)),1000);
+    return()=>clearInterval(iv);
+  },[sessionStart]);
 
-  const markAllDone = () => {
-    const upd={...workoutLog,[todayKey]:{done:true,goal:selGoal,env,rating:"moyen"}};
+  const fmtTime=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+
+  const openEx=idx=>{
+    if(!sessionStart) setSessionStart(Date.now());
+    setActiveExIdx(idx);
+  };
+  const closeEx=()=>{ setCompletedEx(s=>new Set([...s,activeExIdx])); setActiveExIdx(null); };
+  const nextEx=()=>{ setCompletedEx(s=>new Set([...s,activeExIdx])); const n=activeExIdx+1; if(n<exercises.length)setActiveExIdx(n); else setActiveExIdx(null); };
+  const markAllDone=()=>{
+    const upd={...workoutLog,[todayKey]:{done:true,goal:selGoal,env,duration:sessionElapsed}};
     setWorkoutLog(upd);try{localStorage.setItem("fitapp_wlog",JSON.stringify(upd));}catch{}
-    sendNotif("Séance terminée 🎉","Excellent travail aujourd'hui ! 🔥");
+    sendNotif("Séance terminée 🎉",`Durée : ${fmtTime(sessionElapsed)} — excellent travail ! 💪`);
+    setSessionStart(null);setSessionElapsed(0);
   };
+
+  // Current week in 8-week program
+  const currentWeek=parseInt(localStorage.getItem("bartfit_week")||"1");
+  const weekData=PROGRAMME_8S[Math.min(currentWeek-1,7)];
+
+  if(showProgram) return (
+    <div style={{padding:"16px 16px 100px"}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
+        <button onClick={()=>setShowProgram(false)} style={{width:36,height:36,borderRadius:10,border:`1px solid ${C.border}`,background:"transparent",color:C.text,fontSize:18,cursor:"pointer"}}>←</button>
+        <div style={{fontFamily:F.t,fontWeight:800,fontSize:24}}>Programme 8 semaines</div>
+      </div>
+      {/* Current week banner */}
+      <div style={{background:goalData.colorDim,border:`1px solid ${goalData.color}44`,borderRadius:16,padding:16,marginBottom:14}}>
+        <div style={{fontSize:11,color:goalData.color,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>📍 Semaine actuelle</div>
+        <div style={{fontFamily:F.t,fontWeight:800,fontSize:24,color:goalData.color}}>S{currentWeek} — {weekData.label}</div>
+        <div style={{fontSize:13,color:C.muted,marginTop:4}}>{weekData.focus}</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:10}}>
+          {[{l:"Intensité",v:weekData.intensity},{l:"Volume",v:weekData.volume},{l:"Repos",v:weekData.repos}].map(({l,v})=>(
+            <div key={l} style={{background:C.card2,borderRadius:10,padding:"8px 6px",textAlign:"center"}}><div style={{fontFamily:F.t,fontWeight:700,fontSize:15,color:goalData.color}}>{v}</div><div style={{fontSize:10,color:C.muted}}>{l}</div></div>
+          ))}
+        </div>
+        <div style={{marginTop:10,background:C.card,borderRadius:10,padding:"10px 12px",fontSize:12,color:C.muted,lineHeight:1.6}}>💡 {weekData.conseil}</div>
+        <div style={{display:"flex",gap:8,marginTop:10}}>
+          {currentWeek>1&&<button onClick={()=>{const w=Math.max(1,currentWeek-1);localStorage.setItem("bartfit_week",w);window.location.reload();}} style={{flex:1,padding:10,borderRadius:10,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>← S.{currentWeek-1}</button>}
+          {currentWeek<8&&<button onClick={()=>{const w=Math.min(8,currentWeek+1);localStorage.setItem("bartfit_week",w);window.location.reload();}} style={{flex:1,padding:10,borderRadius:10,border:"none",background:goalData.color,color:"#050910",fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>Passer à S.{currentWeek+1} →</button>}
+        </div>
+      </div>
+      {/* All weeks */}
+      {PROGRAMME_8S.map((w,i)=>(
+        <div key={i} style={{background:C.card,border:`1px solid ${i===currentWeek-1?goalData.color+"66":C.border}`,borderRadius:14,padding:"12px 14px",marginBottom:8,opacity:i<currentWeek-1?0.6:1}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div>
+              <div style={{fontFamily:F.t,fontWeight:700,fontSize:16,color:i===currentWeek-1?goalData.color:C.text}}>S{w.week} — {w.label}</div>
+              <div style={{fontSize:12,color:C.muted,marginTop:2}}>{w.focus}</div>
+            </div>
+            <div style={{textAlign:"right"}}>
+              {i<currentWeek-1&&<div style={{fontSize:20}}>✅</div>}
+              {i===currentWeek-1&&<Pill text="EN COURS" color={goalData.color}/>}
+              {i>currentWeek-1&&<div style={{fontSize:11,color:C.muted}}>{w.intensity}</div>}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div style={{padding:"16px 16px 100px"}}>
       {showTimer&&<RestTimer onClose={()=>setShowTimer(false)}/>}
+      {activeExIdx!==null&&<ExerciseModal exercise={exercises[activeExIdx]} exerciseIndex={activeExIdx} totalExercises={exercises.length} level={profile.level} starterMode={starterMode} goalColor={goalData.color} onClose={closeEx} onNext={nextEx} isLast={activeExIdx===exercises.length-1}/>}
 
-      {/* ExerciseModal */}
-      {activeExIdx!==null&&<ExerciseModal
-        exercise={exercises[activeExIdx]}
-        exerciseIndex={activeExIdx}
-        totalExercises={exercises.length}
-        level={profile.level}
-        starterMode={starterMode}
-        goalColor={goalData.color}
-        onClose={()=>{ setCompletedEx(s=>new Set([...s,activeExIdx])); closeEx(); }}
-        onNext={nextEx}
-        isLast={activeExIdx===exercises.length-1}
-      />}
-
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
-        <div style={{fontFamily:F.t,fontWeight:800,fontSize:28,marginTop:20}}>Ma Séance</div>
-        <button onClick={()=>setShowTimer(true)} style={{marginTop:20,padding:"8px 14px",borderRadius:10,border:`1px solid ${C.teal}44`,background:C.teal+"11",color:C.teal,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>⏱ Repos</button>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:20,marginBottom:12}}>
+        <div style={{fontFamily:F.t,fontWeight:800,fontSize:28}}>Ma Séance</div>
+        <div style={{display:"flex",gap:8}}>
+          {sessionStart&&<div style={{background:C.card2,border:`1px solid ${C.border}`,borderRadius:10,padding:"6px 12px",fontFamily:F.t,fontWeight:700,fontSize:15,color:C.accent}}>⏱ {fmtTime(sessionElapsed)}</div>}
+          <button onClick={()=>setShowTimer(true)} style={{padding:"8px 12px",borderRadius:10,border:`1px solid ${C.teal}44`,background:C.teal+"11",color:C.teal,fontFamily:F.t,fontWeight:700,fontSize:13,cursor:"pointer"}}>Repos</button>
+        </div>
       </div>
 
+      {/* Programme 8S button */}
+      <button onClick={()=>setShowProgram(true)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",borderRadius:12,border:`1px solid ${C.purple}44`,background:C.purple+"11",cursor:"pointer",marginBottom:10}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:18}}>📅</span><div style={{textAlign:"left"}}><div style={{fontFamily:F.t,fontWeight:700,fontSize:15,color:C.purple}}>Programme 8 semaines</div><div style={{fontSize:11,color:C.muted}}>Semaine {currentWeek} — {weekData.label}</div></div></div>
+        <span style={{color:C.purple,fontSize:16}}>›</span>
+      </button>
+
       {/* Mode Découverte */}
-      <div style={{background:starterMode?C.teal+"15":C.card,border:`1.5px solid ${starterMode?C.teal+"66":C.border}`,borderRadius:14,padding:"12px 14px",marginBottom:10,display:"flex",alignItems:"center",justifyContent:"space-between",transition:"all 0.3s"}}>
-        <div>
-          <div style={{fontFamily:F.t,fontWeight:700,fontSize:15,color:starterMode?C.teal:C.text}}>{starterMode?"🌱 Mode Découverte":"⚡ Mode Standard"}</div>
-          <div style={{fontSize:11,color:C.muted,marginTop:2}}>{starterMode?"3 exercices · ~15 min · Parfait pour débuter":"Programme complet selon ton niveau"}</div>
-        </div>
-        <button onClick={()=>setStarterMode(!starterMode)} style={{padding:"7px 12px",borderRadius:10,border:`1px solid ${starterMode?C.teal:C.border}`,background:starterMode?C.teal:"transparent",color:starterMode?"#050910":C.muted,fontFamily:F.t,fontWeight:700,fontSize:13,cursor:"pointer",flexShrink:0}}>{starterMode?"Désact.":"Activer"}</button>
+      <div style={{background:starterMode?C.teal+"15":C.card,border:`1.5px solid ${starterMode?C.teal+"66":C.border}`,borderRadius:14,padding:"10px 14px",marginBottom:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div><div style={{fontFamily:F.t,fontWeight:700,fontSize:15,color:starterMode?C.teal:C.text}}>{starterMode?"🌱 Mode Découverte":"⚡ Mode Standard"}</div><div style={{fontSize:11,color:C.muted}}>{starterMode?"3 exercices · ~15 min":"Programme complet"}</div></div>
+        <button onClick={()=>setStarterMode(!starterMode)} style={{padding:"7px 12px",borderRadius:10,border:`1px solid ${starterMode?C.teal:C.border}`,background:starterMode?C.teal:"transparent",color:starterMode?"#050910":C.muted,fontFamily:F.t,fontWeight:700,fontSize:13,cursor:"pointer"}}>{starterMode?"Désact.":"Activer"}</button>
       </div>
 
       {/* Env + Goal */}
@@ -1203,47 +1603,26 @@ function WorkoutTab({profile,workoutLog,setWorkoutLog,starterMode,setStarterMode
       {/* Header séance */}
       <div style={{background:`linear-gradient(135deg,${goalData.colorDim},${C.card})`,border:`1px solid ${goalData.color}44`,borderRadius:16,padding:"12px 16px",marginBottom:10}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div>
-            <div style={{fontFamily:F.t,fontWeight:800,fontSize:22,color:goalData.color}}>{goalData.emoji} {goalData.label}</div>
-            <div style={{fontSize:11,color:C.muted}}>{exercises.length} exercices · ~{goalData.tempsEst} min</div>
-          </div>
-          <div style={{textAlign:"right"}}>
-            <div style={{fontFamily:F.t,fontWeight:800,fontSize:20,color:completedEx.size===exercises.length&&exercises.length>0?C.accent:C.muted}}>{completedEx.size}/{exercises.length}</div>
-            <div style={{fontSize:10,color:C.muted}}>terminés</div>
-          </div>
+          <div><div style={{fontFamily:F.t,fontWeight:800,fontSize:22,color:goalData.color}}>{goalData.emoji} {goalData.label}</div><div style={{fontSize:11,color:C.muted}}>{exercises.length} exercices · ~{goalData.tempsEst} min</div></div>
+          <div style={{textAlign:"right"}}><div style={{fontFamily:F.t,fontWeight:800,fontSize:20,color:completedEx.size===exercises.length&&exercises.length>0?C.accent:C.muted}}>{completedEx.size}/{exercises.length}</div><div style={{fontSize:10,color:C.muted}}>terminés</div></div>
         </div>
-        {/* Progress bar */}
-        <div style={{height:4,background:C.border,borderRadius:2,marginTop:8}}>
-          <div style={{height:"100%",width:`${exercises.length>0?(completedEx.size/exercises.length)*100:0}%`,background:goalData.color,borderRadius:2,transition:"width 0.5s"}}/>
-        </div>
+        <div style={{height:4,background:C.border,borderRadius:2,marginTop:8}}><div style={{height:"100%",width:`${exercises.length>0?(completedEx.size/exercises.length)*100:0}%`,background:goalData.color,borderRadius:2,transition:"width 0.5s"}}/></div>
       </div>
-
-      {/* Science tip */}
       <div style={{background:goalData.colorDim,border:`1px solid ${goalData.color}22`,borderRadius:10,padding:"8px 12px",marginBottom:12,fontSize:11,color:goalData.color}}>🔬 {goalData.science}</div>
 
-      {/* Exercise cards — cliquable → ouvre le modal */}
+      {/* Exercises */}
       {exercises.map((ex,i)=>{
-        const isDone = completedEx.has(i);
-        return (
-          <div key={i} onClick={()=>openEx(i)} style={{
-            background:isDone?goalData.colorDim:C.card,
-            borderRadius:16,border:`1.5px solid ${isDone?goalData.color+"66":C.border}`,
-            padding:14,marginBottom:8,cursor:"pointer",
-            opacity:isDone?0.85:1,transition:"all 0.2s",
-          }}>
+        const isDone=completedEx.has(i);
+        return(
+          <div key={i} onClick={()=>openEx(i)} style={{background:isDone?goalData.colorDim:C.card,borderRadius:16,border:`1.5px solid ${isDone?goalData.color+"66":C.border}`,padding:14,marginBottom:8,cursor:"pointer",opacity:isDone?0.85:1,transition:"all 0.2s"}}>
             <div style={{display:"flex",gap:10,alignItems:"center"}}>
               <div style={{background:goalData.color+(isDone?"30":"15"),borderRadius:12,padding:"4px 2px",flexShrink:0,position:"relative"}}>
-                <StickFigure type={getFigType(ex.nom)} color={isDone?goalData.color:goalData.color} size={60}/>
+                <StickFigure type={getFigType(ex.nom)} color={goalData.color} size={60}/>
                 {isDone&&<div style={{position:"absolute",top:-4,right:-4,width:18,height:18,borderRadius:9,background:goalData.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:"#050910",fontWeight:800}}>✓</div>}
               </div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <div style={{fontWeight:700,fontSize:14,color:isDone?goalData.color:C.text}}>{ex.nom}</div>
-                  <div style={{color:goalData.color,fontSize:18,flexShrink:0}}>{isDone?"✅":"›"}</div>
-                </div>
-                <div style={{fontSize:11,color:goalData.color,fontFamily:F.t,fontWeight:700,marginTop:3}}>
-                  {starterMode?"2×12–15 · repos 90s":getLevelSets(profile.level,ex.setsBase)}
-                </div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><div style={{fontWeight:700,fontSize:14,color:isDone?goalData.color:C.text}}>{ex.nom}</div><div style={{color:goalData.color,fontSize:18,flexShrink:0}}>{isDone?"✅":"›"}</div></div>
+                <div style={{fontSize:11,color:goalData.color,fontFamily:F.t,fontWeight:700,marginTop:3}}>{starterMode?"2×12–15 · repos 90s":getLevelSets(profile.level,ex.setsBase)}</div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:4}}>
                   <Pill text={ex.muscle} color={C.muted} small/>
                   {ex.equipement&&ex.equipement.map((eq,j)=><Pill key={j} text={eq} color={C.blue} small/>)}
@@ -1254,10 +1633,10 @@ function WorkoutTab({profile,workoutLog,setWorkoutLog,starterMode,setStarterMode
         );
       })}
 
-      {/* Marquer séance faite */}
+      {/* Marquer séance */}
       <div style={{marginTop:10}}>
         {done
-          ? <div style={{background:C.accent+"18",border:`1px solid ${C.accent}33`,borderRadius:14,padding:"14px",textAlign:"center",color:C.accent,fontFamily:F.t,fontWeight:700,fontSize:16}}>✅ SÉANCE COMPLÉTÉE AUJOURD'HUI !</div>
+          ? <div style={{background:C.accent+"18",border:`1px solid ${C.accent}33`,borderRadius:14,padding:"14px",textAlign:"center",color:C.accent,fontFamily:F.t,fontWeight:700,fontSize:16}}>✅ SÉANCE COMPLÉTÉE !</div>
           : <button onClick={markAllDone} style={{width:"100%",background:completedEx.size===exercises.length&&exercises.length>0?C.accent:C.card,color:completedEx.size===exercises.length&&exercises.length>0?"#050910":C.muted,border:`1px solid ${C.border}`,borderRadius:14,padding:14,fontFamily:F.t,fontWeight:800,fontSize:16,cursor:"pointer",transition:"all 0.3s"}}>
               {completedEx.size===exercises.length&&exercises.length>0?"🏆 VALIDER LA SÉANCE":"Marquer la séance comme terminée"}
             </button>
@@ -1266,9 +1645,6 @@ function WorkoutTab({profile,workoutLog,setWorkoutLog,starterMode,setStarterMode
     </div>
   );
 }
-/* ═══════════════════════════════════════════
-   NUTRITION TAB
-═══════════════════════════════════════════ */
 /* ═══════════════════════════════════════════
    NUTRITION TAB
 ═══════════════════════════════════════════ */
@@ -1434,11 +1810,18 @@ function RappelsTab({profile,sleepLog,setSleepLog}){
 /* ═══════════════════════════════════════════
    PROFIL TAB
 ═══════════════════════════════════════════ */
-function ProfilTab({profile,setProfile,workoutLog,sleepLog,pas}){
+function ProfilTab({profile,setProfile,workoutLog,sleepLog,pas,weightLog,setWeightLog,measureLog,setMeasureLog}){
+  const [subTab,setSubTab]=useState("stats");
   const [editing,setEditing]=useState(false);const [ep,setEp]=useState({...profile});const [saved,setSaved]=useState(false);const [shareMsg,setShareMsg]=useState("");
-  const [activeAth,setActiveAth]=useState(null);
-  const streak=getStreak(workoutLog);const wkTotal=Object.values(workoutLog).filter(x=>x.done).length;const sl=analyzeWeeklySleep(sleepLog);
-  const bmi=calcBMI(profile.weight,profile.height);const tdee=calcTDEE(profile);
+  const [newWeight,setNewWeight]=useState("");const [weightSaved,setWeightSaved]=useState(false);
+  const [measures,setMeasures]=useState(()=>{
+    const todayKey=new Date().toISOString().split("T")[0];
+    return measureLog[todayKey]||{bras:"",taille:"",hanches:"",poitrine:""};
+  });
+  const streak=getStreak(workoutLog);const wkTotal=Object.values(workoutLog).filter(x=>x.done).length;
+  const sl=analyzeWeeklySleep(sleepLog);const bmi=calcBMI(profile.weight,profile.height);const tdee=calcTDEE(profile);
+  const athlete=ATHLETES.find(a=>a.id===profile.inspiration)||ATHLETES[0];
+
   const saveProfile=()=>{const p={...ep,lastUpdated:Date.now()};setProfile(p);localStorage.setItem("bartfit_profile",JSON.stringify(p));setSaved(true);setEditing(false);setTimeout(()=>setSaved(false),2000);};
   const doShare=(type)=>{
     const text=shareText(profile,workoutLog,sleepLog,pas);
@@ -1448,79 +1831,155 @@ function ProfilTab({profile,setProfile,workoutLog,sleepLog,pas}){
     if(type==="twitter"){window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,"_blank");return;}
     navigator.clipboard.writeText(text).then(()=>setShareMsg("✅ Copié !")).finally(()=>setTimeout(()=>setShareMsg(""),2000));
   };
-  const athlete=ATHLETES.find(a=>a.id===profile.inspiration)||ATHLETES[0];
+
+  const saveWeight=()=>{
+    if(!newWeight||isNaN(parseFloat(newWeight))) return;
+    const todayKey=new Date().toISOString().split("T")[0];
+    const upd={...weightLog,[todayKey]:parseFloat(newWeight)};
+    setWeightLog(upd);try{localStorage.setItem("bartfit_wlog_weight",JSON.stringify(upd));}catch{}
+    setWeightSaved(true);setNewWeight("");setTimeout(()=>setWeightSaved(false),2000);
+  };
+
+  const saveMeasures=()=>{
+    const todayKey=new Date().toISOString().split("T")[0];
+    const upd={...measureLog,[todayKey]:measures};
+    setMeasureLog(upd);try{localStorage.setItem("bartfit_measures",JSON.stringify(upd));}catch{}
+    sendNotif("Mensurations sauvegardées 📏","Continue comme ça !");
+  };
+
   const inputStyle={width:"100%",background:C.card2,border:`1.5px solid ${C.border}`,borderRadius:10,padding:"10px 12px",color:C.text,fontSize:15,fontFamily:F.b,fontWeight:500,outline:"none",boxSizing:"border-box"};
+  const subBtns=[{id:"stats",l:"Stats"},{id:"progres",l:"Progrès"},{id:"corps",l:"Corps"},{id:"compte",l:"Compte"}];
+
   return (
     <div style={{padding:"16px 16px 100px"}}>
       <SectionHeader title={profile.name||"Mon Profil"} sub="Profil & Progrès"/>
-      {/* Stats hero */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:12}}>
-        {[{v:wkTotal,l:"Séances",c:C.accent},{v:`${streak}j`,l:"Streak",c:C.orange},{v:sl?.avg?`${sl.avg}h`:"-",l:"Sommeil",c:C.purple}].map(({v,l,c})=>(
-          <div key={l} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:"12px 8px",textAlign:"center"}}>
-            <div style={{fontFamily:F.t,fontWeight:800,fontSize:22,color:c}}>{v}</div>
-            <div style={{fontSize:11,color:C.muted,marginTop:2}}>{l}</div>
-          </div>
+
+      {/* Sub tabs */}
+      <div style={{display:"flex",gap:4,marginBottom:14,background:C.card,borderRadius:12,padding:4,border:`1px solid ${C.border}`}}>
+        {subBtns.map(({id,l})=>(
+          <button key={id} onClick={()=>setSubTab(id)} style={{flex:1,padding:"8px 0",borderRadius:9,border:"none",background:subTab===id?C.accent:"transparent",color:subTab===id?"#050910":C.muted,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer",transition:"all 0.2s"}}>{l}</button>
         ))}
       </div>
-      {/* Share card */}
-      <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
-        <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:10}}>📤 Partager mes progrès</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:6,marginBottom:shareMsg?8:0}}>
-          {[["📱","Native",()=>doShare("native")],["💬","WhatsApp",()=>doShare("whatsapp")],["👤","Facebook",()=>doShare("facebook")],["🐦","Twitter",()=>doShare("twitter")]].map(([e,l,fn])=>(
-            <button key={l} onClick={fn} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",borderRadius:12,border:`1px solid ${C.border}`,background:C.card2,cursor:"pointer",color:C.text,fontFamily:F.b,fontWeight:600,fontSize:13}}>
-              <span style={{fontSize:18}}>{e}</span>{l}
-            </button>
-          ))}
-        </div>
-        <button onClick={()=>doShare("copy")} style={{width:"100%",padding:"10px 0",borderRadius:10,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontFamily:F.b,fontWeight:600,fontSize:13,cursor:"pointer",marginTop:6}}>📋 Copier le texte</button>
-        {shareMsg&&<div style={{textAlign:"center",color:C.accent,fontSize:13,fontWeight:700,marginTop:8}}>{shareMsg}</div>}
-      </div>
-      {/* Stats body */}
-      {bmi&&<div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-          {[{v:`${profile.weight}kg`,l:"Poids",c:C.text},{v:`${profile.height}cm`,l:"Taille",c:C.text},{v:bmi,l:"IMC",c:parseFloat(bmi)<25?C.accent:C.orange}].map(({v,l,c})=>(<div key={l} style={{background:C.card2,borderRadius:10,padding:"10px 8px",textAlign:"center"}}><div style={{fontFamily:F.t,fontWeight:800,fontSize:20,color:c}}>{v}</div><div style={{fontSize:11,color:C.muted,marginTop:1}}>{l}</div></div>))}
-        </div>
-        {tdee&&<div style={{marginTop:8,background:C.accentDim,borderRadius:10,padding:"10px 12px",textAlign:"center"}}><span style={{fontFamily:F.t,fontWeight:800,fontSize:18,color:C.accent}}>{tdee.toLocaleString()} kcal</span><span style={{fontSize:12,color:C.muted}}> TDEE estimé</span></div>}
-      </div>}
-      {/* Athlete inspiration */}
-      <div style={{background:C.card,border:`1px solid ${athlete.color}33`,borderRadius:16,padding:16,marginBottom:12}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-          <div style={{fontSize:32}}>{athlete.emoji}</div>
-          <div><div style={{fontFamily:F.t,fontWeight:800,fontSize:20,color:athlete.color}}>{athlete.nom}</div><div style={{fontSize:11,color:C.muted}}>{athlete.sport} · {athlete.tagline}</div></div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-          {[{l:"Entraînement",v:athlete.training.sessions,e:"💪"},{l:"Sommeil",v:athlete.sleep.split(" ")[0],e:"😴"},{l:"Calories",v:athlete.diet.kcal,e:"🥗"},{l:"Protéines",v:athlete.diet.protein,e:"🥩"}].map(({l,v,e})=>(<div key={l} style={{background:C.card2,borderRadius:10,padding:"8px 10px"}}><div style={{fontSize:10,color:C.muted,marginBottom:2}}>{e} {l}</div><div style={{fontSize:12,fontWeight:700,color:C.text}}>{v}</div></div>))}
-        </div>
-        <div style={{fontSize:11,color:C.muted,fontStyle:"italic",borderTop:`1px solid ${C.border}`,paddingTop:10,lineHeight:1.7}}>« {athlete.philosophy} »</div>
-      </div>
-      {/* Edit profile */}
-      {editing?(
-        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
-          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:12}}>Modifier le profil</div>
-          {[{label:"Prénom",key:"name",type:"text"},{label:"Âge",key:"age",type:"number"},{label:"Poids (kg)",key:"weight",type:"number"},{label:"Taille (cm)",key:"height",type:"number"}].map(({label,key,type})=>(
-            <div key={key} style={{marginBottom:10}}>
-              <div style={{fontSize:11,color:C.muted,marginBottom:4,fontWeight:600,textTransform:"uppercase",letterSpacing:1}}>{label}</div>
-              <input type={type} value={ep[key]} onChange={e=>setEp(x=>({...x,[key]:e.target.value}))} style={inputStyle}/>
+
+      {/* ── STATS ── */}
+      {subTab==="stats"&&<>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:12}}>
+          {[{v:wkTotal,l:"Séances",c:C.accent},{v:`${streak}j`,l:"Streak",c:C.orange},{v:sl?.avg?`${sl.avg}h`:"-",l:"Sommeil",c:C.purple}].map(({v,l,c})=>(
+            <div key={l} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:"12px 8px",textAlign:"center"}}>
+              <div style={{fontFamily:F.t,fontWeight:800,fontSize:22,color:c}}>{v}</div>
+              <div style={{fontSize:11,color:C.muted,marginTop:2}}>{l}</div>
             </div>
           ))}
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:8}}>
-            <button onClick={()=>setEditing(false)} style={{padding:12,borderRadius:12,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>Annuler</button>
-            <button onClick={saveProfile} style={{padding:12,borderRadius:12,border:"none",background:C.accent,color:"#080B14",fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>{saved?"✅ Sauvegardé !":"Sauvegarder"}</button>
+        </div>
+        {bmi&&<div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+            {[{v:`${profile.weight}kg`,l:"Poids",c:C.text},{v:`${profile.height}cm`,l:"Taille",c:C.text},{v:bmi,l:"IMC",c:parseFloat(bmi)<25?C.accent:C.orange}].map(({v,l,c})=>(<div key={l} style={{background:C.card2,borderRadius:10,padding:"10px 8px",textAlign:"center"}}><div style={{fontFamily:F.t,fontWeight:800,fontSize:20,color:c}}>{v}</div><div style={{fontSize:11,color:C.muted,marginTop:1}}>{l}</div></div>))}
+          </div>
+          {tdee&&<div style={{marginTop:8,background:C.accentDim,borderRadius:10,padding:"10px 12px",textAlign:"center"}}><span style={{fontFamily:F.t,fontWeight:800,fontSize:18,color:C.accent}}>{tdee.toLocaleString()} kcal</span><span style={{fontSize:12,color:C.muted}}> TDEE estimé</span></div>}
+        </div>}
+        {/* Calendar */}
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:12}}>📅 Historique des séances</div>
+          <SessionCalendar workoutLog={workoutLog}/>
+        </div>
+        {/* Share */}
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:10}}>📤 Partager mes progrès</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:6}}>
+            {[["📱","Native",()=>doShare("native")],["💬","WhatsApp",()=>doShare("whatsapp")],["👤","Facebook",()=>doShare("facebook")],["🐦","Twitter",()=>doShare("twitter")]].map(([e,l,fn])=>(
+              <button key={l} onClick={fn} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",borderRadius:12,border:`1px solid ${C.border}`,background:C.card2,cursor:"pointer",color:C.text,fontFamily:F.b,fontWeight:600,fontSize:13}}>
+                <span style={{fontSize:18}}>{e}</span>{l}
+              </button>
+            ))}
+          </div>
+          <button onClick={()=>doShare("copy")} style={{width:"100%",padding:"10px 0",borderRadius:10,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontFamily:F.b,fontWeight:600,fontSize:13,cursor:"pointer"}}>📋 Copier le texte</button>
+          {shareMsg&&<div style={{textAlign:"center",color:C.accent,fontSize:13,fontWeight:700,marginTop:8}}>{shareMsg}</div>}
+        </div>
+      </>}
+
+      {/* ── PROGRÈS ── */}
+      {subTab==="progres"&&<>
+        {/* Saisie poids */}
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:10}}>⚖️ Pesée du jour</div>
+          <div style={{display:"flex",gap:8}}>
+            <input type="number" placeholder="Ex: 75.5" value={newWeight} onChange={e=>setNewWeight(e.target.value)} style={{...inputStyle,flex:1}}/>
+            <button onClick={saveWeight} style={{padding:"10px 16px",borderRadius:10,border:"none",background:weightSaved?C.accent:C.card2,color:weightSaved?"#050910":C.text,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer",transition:"all 0.3s",whiteSpace:"nowrap"}}>{weightSaved?"✅ Sauvé !":"+ Ajouter"}</button>
           </div>
         </div>
-      ):(
-        <button onClick={()=>setEditing(true)} style={{width:"100%",padding:14,borderRadius:14,border:`1px solid ${C.border}`,background:C.card,color:C.text,fontFamily:F.t,fontWeight:700,fontSize:16,cursor:"pointer",marginBottom:8}}>✏️ Modifier mon profil</button>
-      )}
-      {/* Objective reminder */}
-      <div style={{background:C.card2,border:`1px solid ${C.border}`,borderRadius:14,padding:14,textAlign:"center"}}>
-        <div style={{fontSize:11,color:C.muted,marginBottom:4}}>Prochaine mise à jour recommandée</div>
-        <div style={{fontFamily:F.t,fontWeight:700,fontSize:16,color:C.blue}}>Dans {Math.max(0,60-Math.round((Date.now()-(profile.lastUpdated||Date.now()))/(1000*60*60*24)))} jours</div>
-        <div style={{fontSize:11,color:C.muted,marginTop:2}}>Tes données évoluent — mets à jour pour rester précis</div>
-      </div>
+        {/* Graph */}
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:10}}>📈 Évolution du poids</div>
+          <WeightGraph weightLog={weightLog}/>
+        </div>
+        {/* Athlete inspiration */}
+        <div style={{background:C.card,border:`1px solid ${athlete.color}33`,borderRadius:16,padding:16}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+            <div style={{fontSize:28}}>{athlete.emoji}</div>
+            <div><div style={{fontFamily:F.t,fontWeight:800,fontSize:18,color:athlete.color}}>{athlete.nom}</div><div style={{fontSize:11,color:C.muted}}>{athlete.sport} · {athlete.tagline}</div></div>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+            {[{l:"Entraînement",v:athlete.training.sessions,e:"💪"},{l:"Sommeil",v:athlete.sleep.split(" ")[0],e:"😴"},{l:"Calories",v:athlete.diet.kcal,e:"🥗"},{l:"Protéines",v:athlete.diet.protein,e:"🥩"}].map(({l,v,e})=>(<div key={l} style={{background:C.card2,borderRadius:10,padding:"8px 10px"}}><div style={{fontSize:10,color:C.muted,marginBottom:2}}>{e} {l}</div><div style={{fontSize:12,fontWeight:700,color:C.text}}>{v}</div></div>))}
+          </div>
+        </div>
+      </>}
+
+      {/* ── CORPS (mensurations) ── */}
+      {subTab==="corps"&&<>
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:12}}>📏 Mes mensurations (cm)</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
+            {[{key:"bras",label:"💪 Bras",ph:"35"},{key:"taille",label:"⌚ Taille",ph:"80"},{key:"hanches",label:"🦵 Hanches",ph:"95"},{key:"poitrine",label:"🏋️ Poitrine",ph:"100"}].map(({key,label,ph})=>(
+              <div key={key}>
+                <div style={{fontSize:12,color:C.muted,marginBottom:4,fontWeight:600}}>{label}</div>
+                <input type="number" placeholder={ph} value={measures[key]} onChange={e=>setMeasures(m=>({...m,[key]:e.target.value}))} style={{...inputStyle,fontSize:16,fontFamily:F.t,fontWeight:700,color:C.accent}}/>
+              </div>
+            ))}
+          </div>
+          <button onClick={saveMeasures} style={{width:"100%",padding:12,borderRadius:12,border:"none",background:C.accent,color:"#050910",fontFamily:F.t,fontWeight:700,fontSize:15,cursor:"pointer"}}>SAUVEGARDER LES MENSURATIONS</button>
+        </div>
+        {/* Historique mensurations */}
+        {Object.keys(measureLog).length>0&&<div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16}}>
+          <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:10}}>Historique</div>
+          {Object.entries(measureLog).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,5).map(([date,m])=>(
+            <div key={date} style={{borderBottom:`1px solid ${C.border}`,paddingBottom:8,marginBottom:8}}>
+              <div style={{fontSize:11,color:C.muted,marginBottom:4}}>{date}</div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[["💪",m.bras,"Bras"],["⌚",m.taille,"Taille"],["🦵",m.hanches,"Hanches"],["🏋️",m.poitrine,"Poitrine"]].map(([e,v,l])=>v?(<div key={l} style={{background:C.card2,borderRadius:8,padding:"4px 8px",fontSize:12}}><span style={{color:C.muted,fontSize:10}}>{e} {l} </span><strong style={{color:C.text}}>{v}cm</strong></div>):null)}
+              </div>
+            </div>
+          ))}
+        </div>}
+      </>}
+
+      {/* ── COMPTE ── */}
+      {subTab==="compte"&&<>
+        {editing?(
+          <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:16,marginBottom:12}}>
+            <div style={{fontSize:11,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:12}}>Modifier le profil</div>
+            {[{label:"Prénom",key:"name",type:"text"},{label:"Âge",key:"age",type:"number"},{label:"Poids (kg)",key:"weight",type:"number"},{label:"Taille (cm)",key:"height",type:"number"}].map(({label,key,type})=>(
+              <div key={key} style={{marginBottom:10}}>
+                <div style={{fontSize:11,color:C.muted,marginBottom:4,fontWeight:600,textTransform:"uppercase",letterSpacing:1}}>{label}</div>
+                <input type={type} value={ep[key]} onChange={e=>setEp(x=>({...x,[key]:e.target.value}))} style={inputStyle}/>
+              </div>
+            ))}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:8}}>
+              <button onClick={()=>setEditing(false)} style={{padding:12,borderRadius:12,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>Annuler</button>
+              <button onClick={saveProfile} style={{padding:12,borderRadius:12,border:"none",background:C.accent,color:"#080B14",fontFamily:F.t,fontWeight:700,fontSize:14,cursor:"pointer"}}>{saved?"✅ Sauvegardé !":"Sauvegarder"}</button>
+            </div>
+          </div>
+        ):(
+          <button onClick={()=>setEditing(true)} style={{width:"100%",padding:14,borderRadius:14,border:`1px solid ${C.border}`,background:C.card,color:C.text,fontFamily:F.t,fontWeight:700,fontSize:16,cursor:"pointer",marginBottom:10}}>✏️ Modifier mon profil</button>
+        )}
+        <div style={{background:C.card2,border:`1px solid ${C.border}`,borderRadius:14,padding:14,textAlign:"center"}}>
+          <div style={{fontSize:11,color:C.muted,marginBottom:4}}>Prochaine mise à jour recommandée</div>
+          <div style={{fontFamily:F.t,fontWeight:700,fontSize:16,color:C.blue}}>Dans {Math.max(0,60-Math.round((Date.now()-(profile.lastUpdated||Date.now()))/(1000*60*60*24)))} jours</div>
+          <div style={{fontSize:11,color:C.muted,marginTop:2}}>Tes données évoluent — mets à jour pour rester précis</div>
+        </div>
+      </>}
     </div>
   );
 }
-
 /* ═══════════════════════════════════════════
    BOTTOM NAV
 ═══════════════════════════════════════════ */
@@ -1550,6 +2009,8 @@ export default function BartFit(){
   const [sleepLog,setSleepLog]=useState(()=>{try{return JSON.parse(localStorage.getItem("fitapp_sleep")||"{}");}catch{return {};}});
   const [showUpdateBanner,setShowUpdateBanner]=useState(false);
   const [starterMode,setStarterMode]=useState(()=>localStorage.getItem("bartfit_starter")==="true");
+  const [weightLog,setWeightLog]=useState(()=>{try{return JSON.parse(localStorage.getItem("bartfit_wlog_weight")||"{}");}catch{return {};}});
+  const [measureLog,setMeasureLog]=useState(()=>{try{return JSON.parse(localStorage.getItem("bartfit_measures")||"{}");}catch{return {};}});
 
   // Steps simulation
   useEffect(()=>{const iv=setInterval(()=>setPas(p=>p+Math.floor(Math.random()*4)+1),8000);return()=>clearInterval(iv);},[]);
@@ -1566,10 +2027,10 @@ export default function BartFit(){
   const render=()=>{
     switch(tab){
       case "home":return <HomeTab profile={profile} pas={pas} setTab={setTab} workoutLog={workoutLog} sleepLog={sleepLog} showUpdateBanner={showUpdateBanner} setShowUpdateBanner={setShowUpdateBanner} starterMode={starterMode}/>;
-      case "workout":return <WorkoutTab profile={profile} workoutLog={workoutLog} setWorkoutLog={setWorkoutLog} starterMode={starterMode} setStarterMode={v=>{setStarterMode(v);localStorage.setItem("bartfit_starter",String(v));}}/>;
+      case "workout":return <WorkoutTab profile={profile} workoutLog={workoutLog} setWorkoutLog={setWorkoutLog} starterMode={starterMode} setStarterMode={v=>{setStarterMode(v);localStorage.setItem("bartfit_starter",String(v));}} weightLog={weightLog} setWeightLog={setWeightLog}/>;
       case "nutrition":return <NutritionTab profile={profile}/>;
       case "reminders":return <RappelsTab profile={profile} sleepLog={sleepLog} setSleepLog={setSleepLog}/>;
-      case "profil":return <ProfilTab profile={profile} setProfile={p=>{setProfile(p);localStorage.setItem("bartfit_profile",JSON.stringify(p));}} workoutLog={workoutLog} sleepLog={sleepLog} pas={pas}/>;
+      case "profil":return <ProfilTab profile={profile} setProfile={p=>{setProfile(p);localStorage.setItem("bartfit_profile",JSON.stringify(p));}} workoutLog={workoutLog} sleepLog={sleepLog} pas={pas} weightLog={weightLog} setWeightLog={setWeightLog} measureLog={measureLog} setMeasureLog={setMeasureLog}/>;
       default:return null;
     }
   };
