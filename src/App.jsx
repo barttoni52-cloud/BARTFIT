@@ -530,12 +530,64 @@ function analyzeWeeklySleep(log) {
   const avg=days.reduce((a,b)=>a+b,0)/days.length;
   return {avg:avg.toFixed(1),bad:days.filter(h=>h<7).length,days:days.length};
 }
-function sendNotif(title,body) {
-  if(typeof Notification==="undefined"||Notification.permission!=="granted") return;
-  const n=new Notification(`BartFit — ${title}`,{body,tag:"bartfit"});
-  setTimeout(()=>n.close(),8000);
+// Clé publique VAPID pour les push notifications
+const VAPID_PUBLIC_KEY = "BHrGm2-1UggoHlMtMqh_x4JyogV-Ojub2vxDgTr7FbSJ-PcD9Q99y6fM7vdC47FZzdX3Srix4qDOjxGcs0iG9z0";
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 }
-async function askPerm(){if(typeof Notification==="undefined")return "denied";if(Notification.permission==="default")return await Notification.requestPermission();return Notification.permission;}
+
+// Envoie une notification locale (app ouverte)
+function sendNotif(title, body) {
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+  const n = new Notification(`BartFit — ${title}`, { body, icon: "/logo.png", tag: "bartfit" });
+  setTimeout(() => n.close(), 8000);
+}
+
+// Envoie via le service worker push (app fermée possible)
+async function sendPushNotif(title, body) {
+  try {
+    const sub = localStorage.getItem("bartfit_push_sub");
+    if (!sub) { sendNotif(title, body); return; }
+    await fetch("/api/push", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subscription: JSON.parse(sub), title: `BartFit — ${title}`, body, icon: "/logo.png" }),
+    });
+  } catch {
+    sendNotif(title, body); // fallback
+  }
+}
+
+async function askPerm() {
+  if (typeof Notification === "undefined") return "denied";
+  if (Notification.permission === "default") await Notification.requestPermission();
+  if (Notification.permission !== "granted") return Notification.permission;
+
+  // Enregistrer pour les push notifications
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      });
+    }
+    localStorage.setItem("bartfit_push_sub", JSON.stringify(sub));
+    await fetch("/api/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subscription: sub }),
+    });
+  } catch (err) {
+    console.warn("Push subscription failed:", err);
+  }
+  return Notification.permission;
+}
 function getStreak(log) {
   let s=0;const today=new Date();
   for(let i=0;i<60;i++){const d=new Date(today);d.setDate(d.getDate()-i);const k=d.toISOString().split("T")[0];if(log[k]?.done)s++;else if(i>0)break;}
@@ -1439,22 +1491,83 @@ function RappelsTab({profile,sleepLog,setSleepLog}){
   const [rappels,setRappels]=useState(()=>{try{const s=localStorage.getItem("fitapp_rappels");return s?JSON.parse(s):RAPPELS_DEFAULT;}catch{return RAPPELS_DEFAULT;}});
   const [perm,setPerm]=useState(typeof Notification!=="undefined"?Notification.permission:"denied");
   const [sleepTab,setSleepTab]=useState(false);
+  const [pushReady,setPushReady]=useState(!!localStorage.getItem("bartfit_push_sub"));
   const todayKey=new Date().toISOString().split("T")[0];const todaySleep=sleepLog[todayKey]||{};
   const [bedtime,setBedtime]=useState(todaySleep.bed||"22:30");const [waketime,setWaketime]=useState(todaySleep.wake||"06:30");const [sleepSaved,setSleepSaved]=useState(false);
+
   useEffect(()=>{try{localStorage.setItem("fitapp_rappels",JSON.stringify(rappels));}catch{};},[rappels]);
+
+  // Vérificateur de rappels toutes les minutes
+  useEffect(()=>{
+    const check=()=>{
+      const now=new Date(),hh=String(now.getHours()).padStart(2,"0"),mm=String(now.getMinutes()).padStart(2,"0"),time=`${hh}:${mm}`;
+      rappels.filter(r=>r.actif&&r.heure===time).forEach(r=>{
+        sendPushNotif(r.nom,r.emoji+" "+getRappelMsg(r));
+      });
+    };
+    const iv=setInterval(check,60000);
+    return()=>clearInterval(iv);
+  },[rappels]);
+
+  const getRappelMsg=r=>{
+    const msgs={
+      1:"Bois un grand verre d'eau ! 💧",
+      2:rand(MOTIV),
+      3:"N'oublie pas tes protéines ! 🥩",
+      4:"Il est temps de dormir pour bien récupérer 😴",
+      5:"Debout champion(ne) ! Nouvelle journée 🌅",
+      6:"5 minutes d'étirements avant de dormir 🧘",
+      7:"Prends tes compléments alimentaires 💊",
+      8:"Profite de la pause pour marcher 10 minutes 🚶",
+    };
+    return msgs[r.id]||r.nom;
+  };
+
+  const activerPush=async()=>{
+    const p=await askPerm();
+    setPerm(p);
+    if(p==="granted") setPushReady(!!localStorage.getItem("bartfit_push_sub"));
+  };
+
   const toggle=id=>setRappels(r=>r.map(x=>x.id===id?{...x,actif:!x.actif}:x));
   const setHeure=(id,h)=>setRappels(r=>r.map(x=>x.id===id?{...x,heure:h}:x));
-  const saveSleep=()=>{const h=calcSleepH(bedtime,waketime);const upd={...sleepLog,[todayKey]:{bed:bedtime,wake:waketime,hours:h}};setSleepLog(upd);try{localStorage.setItem("fitapp_sleep",JSON.stringify(upd));}catch{}setSleepSaved(true);setTimeout(()=>setSleepSaved(false),2000);const anal=analyzeWeeklySleep(upd);if(anal&&anal.days>=5&&new Date().getDay()===0){const msg=parseFloat(anal.avg)>=7?`Excellente semaine : ${anal.avg}h en moyenne 🌟`:`${anal.avg}h en moy. — Conseil : ${rand(SLEEP_TIPS)}`;sendNotif("Bilan sommeil",msg);}};
+  const testerRappel=r=>sendPushNotif(r.nom,r.emoji+" "+getRappelMsg(r));
+
+  const saveSleep=()=>{
+    const h=calcSleepH(bedtime,waketime);
+    const upd={...sleepLog,[todayKey]:{bed:bedtime,wake:waketime,hours:h}};
+    setSleepLog(upd);try{localStorage.setItem("fitapp_sleep",JSON.stringify(upd));}catch{}
+    setSleepSaved(true);setTimeout(()=>setSleepSaved(false),2000);
+    const anal=analyzeWeeklySleep(upd);
+    if(anal&&anal.days>=5&&new Date().getDay()===0){
+      const msg=parseFloat(anal.avg)>=7?`Excellente semaine : ${anal.avg}h en moyenne 🌟`:`${anal.avg}h en moy. — Conseil : ${rand(SLEEP_TIPS)}`;
+      sendPushNotif("Bilan sommeil",msg);
+    }
+  };
+
   const weekDays=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().split("T")[0];});
   const anal=analyzeWeeklySleep(sleepLog);const sc=h=>h>=8?C.teal:h>=7?C.accent:h>=6?C.orange:C.red;
   const inputStyle={background:C.card2,border:`1.5px solid ${C.border}`,borderRadius:10,padding:"10px 12px",color:C.purple,fontSize:16,fontFamily:F.t,fontWeight:700,outline:"none",width:"100%",boxSizing:"border-box"};
+
   return (
     <div style={{padding:"16px 16px 100px"}}>
       <SectionHeader title="Rappels & Sommeil" sub="Programmés"/>
-      {/* Permission */}
-      <div style={{background:perm==="granted"?C.accent+"15":C.orange+"15",border:`1px solid ${perm==="granted"?C.accent:C.orange}44`,borderRadius:12,padding:"10px 14px",marginBottom:12,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <div style={{fontSize:12,fontWeight:600}}>{perm==="granted"?"✅ Notifications activées":"⚠️ Active les notifications"}</div>
-        {perm!=="granted"&&<button onClick={async()=>setPerm(await askPerm())} style={{padding:"6px 12px",borderRadius:8,border:"none",background:C.accent,color:"#080B14",fontSize:12,fontWeight:700,cursor:"pointer"}}>Activer</button>}
+
+      {/* Permission + Push status */}
+      <div style={{background:pushReady?C.accent+"15":perm==="granted"?C.blue+"15":C.orange+"15",border:`1px solid ${pushReady?C.accent:perm==="granted"?C.blue:C.orange}44`,borderRadius:14,padding:"12px 14px",marginBottom:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:pushReady?C.accent:perm==="granted"?C.blue:C.orange}}>
+              {pushReady?"🔔 Notifications push actives !":perm==="granted"?"✅ Notifications activées":"⚠️ Active les notifications"}
+            </div>
+            <div style={{fontSize:11,color:C.muted,marginTop:2}}>
+              {pushReady?"Tu recevras les rappels même app fermée 🎉":perm==="granted"?"Clique pour activer les push (app fermée)":"Requis pour recevoir les rappels"}
+            </div>
+          </div>
+          {!pushReady&&<button onClick={activerPush} style={{padding:"8px 14px",borderRadius:10,border:"none",background:C.accent,color:"#050910",fontSize:12,fontWeight:700,cursor:"pointer",flexShrink:0,fontFamily:F.t}}>
+            {perm==="granted"?"Activer Push":"Activer"}
+          </button>}
+        </div>
       </div>
       {/* Tab */}
       <div style={{background:C.card,borderRadius:14,padding:4,display:"flex",marginBottom:14,border:`1px solid ${C.border}`}}>
@@ -1477,6 +1590,7 @@ function RappelsTab({profile,sleepLog,setSleepLog}){
                   </div>
                   <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
                     <input type="time" value={r.heure} onChange={e=>setHeure(r.id,e.target.value)} style={{background:C.card2,border:`1px solid ${C.border}`,color:r.couleur,borderRadius:8,padding:"5px 8px",fontSize:13,fontFamily:F.t,fontWeight:700,outline:"none"}}/>
+                    <button onClick={()=>testerRappel(r)} style={{padding:"5px 10px",borderRadius:8,border:`1px solid ${C.border}`,background:"transparent",color:C.muted,fontSize:11,fontWeight:600,cursor:"pointer"}}>Tester</button>
                     <Pill text={r.cat} color={r.couleur} small/>
                   </div>
                 </div>
