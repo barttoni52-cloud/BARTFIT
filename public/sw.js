@@ -25,3 +25,28 @@ self.addEventListener("fetch", e => {
     })
   );
 });
+
+// ── PUSH NOTIFICATIONS ──
+self.addEventListener("push", e => {
+  let data = { title: "BartFit 💪", body: "Nouveau message !", icon: "/logo.png", badge: "/logo.png" };
+  try { data = { ...data, ...e.data.json() }; } catch {}
+  e.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body, icon: data.icon, badge: data.badge,
+      tag: data.tag || "bartfit", vibrate: [200, 100, 200], data,
+    })
+  );
+});
+
+// ── Clic notification → ouvre l'app ──
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
+      for (const client of list) {
+        if (client.url.includes(self.location.origin) && "focus" in client) return client.focus();
+      }
+      return clients.openWindow("/");
+    })
+  );
+});
