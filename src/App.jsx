@@ -2060,6 +2060,5 @@ export default function BartFit(){
     </>
   );
 }
-
-// v3.1
+// v3.2
  
